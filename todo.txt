@@ -1,0 +1,10 @@
+long term :
+    will want sockets.io
+    get npm start to run a better .bat file with mongo and rebuild
+
+done:
+    set up express
+
+rightnow:
+    render project start
+    install react and get a landing page
