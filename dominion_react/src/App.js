@@ -3,6 +3,13 @@ import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
+  state = {users: []}
+
+  componentDidMount() {
+    fetch('/users')
+      .then(res => res.json())
+      .then(users => this.setState({ users }));
+  }
   render() {
     return (
       <div className="App">
@@ -11,9 +18,14 @@ class App extends Component {
           <h2>Welcome to React</h2>
         </div>
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+         Lets Make MERN Dominion Happen! 
         </p>
-        <p> Not sure how this works but here we go</p>
+
+        <h1>Users</h1>
+        {this.state.users.map(user =>
+          <div key={user.id}>{user.username}</div>
+        )}
+       
       </div>
     );
   }
