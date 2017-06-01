@@ -6,6 +6,8 @@ import './index.css';
 import Layout from "./componants/Layout"
 import './static/App.css';
 
-// ReactDOM.render(<App />, document.getElementById('root'));
-ReactDOM.render(<Layout />, document.getElementById('layout'));
+const root = document.getElementById('root')
+
+ReactDOM.render(<App />, root );
+// ReactDOM.render(<Layout />, document.getElementById('layout'));
 registerServiceWorker();

@@ -1,42 +1,35 @@
 import React, { Component } from 'react';
+import Layout from "./componants/Layout"
 
 // import './App.css';
 
-
+//this is likely one extra layer of wrappI dont need may need to move
+//alyout to the app level... or just do away with layout not sure yet
 class App extends Component {
-  state = {users: []}
+  //state is internal and only effects this comp.
+  //props are for injecting
+  state = {}
   // app = document.getElementsByClassName("App")
-  fooObj = {
-    1:1,
-    2:2
+  constructor(){
+    super()
+    // this.state = {name : "My State Name variable"}
   }
 
   componentDidMount() {
-    fetch('/users')
-      .then(res => res.json())
-      .then(users => this.setState({ users }));
+    
   }
 
   classMethod(){
-    return "Scott"
+    
   }
 
   render() {
+    // setTimeout(() => {
+    //   this.setState({name : "State changed"})
+    // }, 2000)
     return (
       <div className="App">
-        
-        <p className="App-intro">
-         Lets Make MERN Dominion Happen! 
-        </p>
-
-        <h1>Users</h1>
-        {this.state.users.map(user =>
-          <div key={user.id}>{user.username}</div>
-        )}
-
-        <h4>{this.classMethod()}</h4>
-       
-        
+        <Layout />
       </div>
     );
   }

@@ -1,10 +1,21 @@
 long term :
     will want sockets.io
     get npm start to run a better .bat file with mongo and rebuild
+    ensure that babel is working???
+    incorporate offside-jsy
+    figure out .js vs .jsx
 
 done:
     set up express
-
-rightnow:
     render project start
     install react and get a landing page
+    modularize componants
+
+rightnow:
+
+    pass variables through parent/child/ sibling 
+    manage data with props and state and context
+    onclick and onHover events
+
+    
+   
