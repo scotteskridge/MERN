@@ -1,0 +1,86 @@
+*{
+  padding: 0px;
+  margin: 0px;
+}
+
+html {
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+h1 {
+  margin: 1em 0 0.25em 0;
+}
+
+input[type=text] {
+  padding: 0.5em;
+}
+
+.pile{
+
+}
+
+#score_board{
+  list-style: none;
+}
+.stats ul{
+  list-style: none;
+}
+
+.card {
+  padding: 5px;
+  margin: 5px;
+  list-style: none;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  width: 150px;
+  height: 200px;
+  background-color: rgba(0,0,255,0.05)
+}
+.card li{
+  padding: 5px;
+}
+
+#player_state{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin : 5px;
+  padding : 5px;
+}
+.top_board, .bottom_board{
+  display: flex;
+  /*flex-wrap: wrap;*/
+  justify-content: space-between;
+}
+
+#player_state div{
+  /*border-style: solid;
+  border-width: 1px;
+  border-color: black;*/
+  margin : 5px;
+  padding : 5px;
+}
+.discard_pile{
+
+}
+.played_cards{
+  width: 80%;
+}
+
+.player_hand{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.treasure, .victory, .action{
+  margin : 5px;
+  padding : 5px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}

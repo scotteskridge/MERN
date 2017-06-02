@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="dominion.css">
+  <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+  <script type="text/javascript" src = "cards.js"></script>
+  <script type="text/javascript" src = "DeckClass.js"></script>
+  <script type="text/javascript" src = "PlayerClass.js"></script>
+  <script type="text/javascript" src = "Initialize.js"></script>
+  <script type="text/javascript" src = "game.js"></script>
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Setting HTML content example</title>
+</head>
+<body>
+  <h3 >It is <span id= "current_player"></span>'s turn.  </h1>
+    <h4 <span id = "current_phase"></span></h4>
+    <button id = "next_phase" type="button" name="Next">Next </button>
+    <div >
+      <h3>Score:</h3>
+      <ul id="score_board">
+
+      </ul>
+    </div>
+
+    <br>
+    <br>
+    <div class="game_board click" >
+      <div class="treasure">
+
+      </div>
+      <div class="victory">
+
+      </div>
+      <div class="action">
+        actions
+      </div>
+
+    </div>
+
+
+
+    <div id="player_state">
+      <div class="top_board">
+
+
+        <div class="stats card">
+          <ul>
+            <li>Deck Count: <span id = "deck_count"></span></li>
+            <li>Discard Count: <span id = "discard_count"></span></li>
+            <li>Actions: <span id = "actions"></span></li>
+            <li>Buys: <span id = "buys"></span></li>
+            <li>Coins: <span id = "coins"></span></li>
+          </ul>
+
+        </div>
+        <div class="played_cards">
+          played_cards
+        </div>
+      </div>
+      <div class="bottom_board">
+
+
+        <div class="discard_pile card">
+          discard_pile
+        </div>
+
+        <div class="player_hand">
+
+        </div>
+        <div class="draw_deck card">
+          draw_deck
+        </div>
+
+      </div>
+    </div>
+
+  </body>
+  </html>
