@@ -1,6 +1,7 @@
 import React from "react"
 import logo from './../static/logo.svg';
 import Title from "./Header/Title"
+import { BrowserRouter as Router, Link, Route} from "react-router-dom"
 
 // import './../App.css';
 
@@ -27,7 +28,7 @@ export default class Header extends React.Component {
             <div className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
                 <Title title = {this.props.title} />
-                <input onChange = {this.handleChange.bind(this)} />
+                {/*<Link to ="/"> Route </Link>*/}
              </div>
         )
     }

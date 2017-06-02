@@ -1,12 +1,12 @@
 import React from "react"
-import Body from "./Body"
-import Footer from "./Footer"
-import Header from "./Header"
-import Data from "./Data"
+import Body from "../componants/Body"
+import Footer from "../componants/Footer"
+import Header from "../componants/Header"
+import Data from "../componants/Data"
 import { BrowserRouter as Router, Link, Route} from "react-router-dom"
 
 
-export default class Layout extends React.Component {
+export default class Tutorial extends React.Component {
     constructor(){
         super()
         this.state = {

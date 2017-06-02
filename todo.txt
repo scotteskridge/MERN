@@ -1,21 +1,40 @@
+Cool tech:
+    https://www.npmjs.com/package/react-project
+    take a look at class names https://github.com/JedWatson/classnames
+    take a look at flux and dispatchers https://www.youtube.com/watch?v=MZfCVq5iCBw&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b&index=9#t=35.959125
+    take a look at redux https://www.youtube.com/watch?v=1w-oQ-i1XB8&index=15&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b
+
+
 long term :
     will want sockets.io
     get npm start to run a better .bat file with mongo and rebuild
     ensure that babel is working???
     incorporate offside-jsy
     figure out .js vs .jsx
+    learn lodash
+    use object.assign({}, foo) to get around passing objects by refrerence
+
 
 done:
     set up express
     render project start
     install react and get a landing page
     modularize componants
+    pass variables through parent/child/ sibling 
+    onclick and onHover events
+    import and use semantic
+    incorporate routing
 
 rightnow:
-
-    pass variables through parent/child/ sibling 
+    put some cards on screen
+    pull in all of your dominion code
+    
     manage data with props and state and context
-    onclick and onHover events
+
+
+For fun:
+    grab some card art http://wiki.dominionstrategy.com/index.php/Isotropic_art_gallery
+    
 
     
    
