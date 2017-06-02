@@ -1,4 +1,4 @@
-import React, { Component} from "react"
+import React from "react"
 
 
 export default class Body extends React.Component {
@@ -8,8 +8,9 @@ export default class Body extends React.Component {
         1:1,
         2:2
     }
-    constructor(){
-        super()
+    constructor(props){
+        super(props)
+        console.log("so my constructor isn't useless")
     }
     componentDidMount() {
     fetch('/users')

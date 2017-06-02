@@ -3,7 +3,7 @@ import Body from "../componants/Body"
 import Footer from "../componants/Footer"
 import Header from "../componants/Header"
 import Data from "../componants/Data"
-import { BrowserRouter as Router, Link, Route} from "react-router-dom"
+// import { BrowserRouter as Router, Link, Route} from "react-router-dom"
 
 
 export default class Tutorial extends React.Component {

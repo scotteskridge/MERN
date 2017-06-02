@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { BrowserRouter as Router, Link, Route, Switch} from "react-router-dom"
+import { BrowserRouter as Router, Route, Switch} from "react-router-dom"
 
 import Layout from './componants/Layout';
 import Dominion from "./pages/Dominion"
@@ -12,18 +12,15 @@ import Nav from "./componants/Nav"
 //this is likely one extra layer of wrappI dont need may need to move
 //alyout to the app level... or just do away with layout not sure yet
 
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-  </div>
-)
+
 export default class App extends Component {
   //state is internal and only effects this comp.
   //props are for injecting
   state = {}
   // app = document.getElementsByClassName("App")
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
+    console.log("app state is", this.state )
     // this.state = {name : "My State Name variable"}
   }
   
@@ -71,8 +68,8 @@ export default class App extends Component {
 }
 
 //I see this often as small sub components
-const SomeOtherApp = () => (
+/*const SomeOtherApp = () => (
   <div>
   
   </div>
-)
+)*/

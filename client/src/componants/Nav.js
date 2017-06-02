@@ -1,9 +1,10 @@
 import React from "react"
-import { Link, NavLink} from "react-router-dom"
+import { NavLink} from "react-router-dom" //not sure the difference between Link and NavLink
 
 export default class Nav extends React.Component {
-    constructor(){
-        super()
+    constructor(props){
+        super(props)
+        console.log("so my constructor isn't useless")
     }
     render(){
         return (

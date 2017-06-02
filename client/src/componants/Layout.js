@@ -3,7 +3,7 @@ import Body from "./Body"
 import Footer from "./Footer"
 import Header from "./Header"
 import Data from "./Data"
-import { BrowserRouter as Router, Link, Route} from "react-router-dom"
+// import { BrowserRouter as Router, Link, Route} from "react-router-dom"
 
 
 export default class Layout extends React.Component {

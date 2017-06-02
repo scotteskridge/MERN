@@ -1,4 +1,4 @@
-// class Card{
+// export class Card{
 //   constructor(){
 //    this.Cost = 0;
 //    this.Victory_Povars = 0;
@@ -18,8 +18,10 @@
 //
 // }
 
+// import Copper from '../../../static/assets/Copper.jpg' //not sure why this doesnt work
+//may want to add an img atribute take a look at header on how to import those
 
-class Copper {
+export class Copper {
   constructor(){
     this.Cost = 1;
     this.Victory_Points = 0;
@@ -39,7 +41,7 @@ class Copper {
   }
 }
 
-class Silver{
+export class Silver{
   constructor(){
     this.Cost = 3;
     this.Victory_Points = 0;
@@ -59,7 +61,7 @@ class Silver{
   }
 }
 
-class Gold{
+export class Gold{
   constructor(){
     this.Cost = 6;
     this.Victory_Points = 0;
@@ -79,7 +81,7 @@ class Gold{
   }
 }
 
-class Estate {
+export class Estate {
   constructor(){
     this.Cost = 2;
     this.Victory_Points = 1;
@@ -99,7 +101,7 @@ class Estate {
   }
 }
 
-class Duchy{
+export class Duchy{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 3;
@@ -119,7 +121,7 @@ class Duchy{
   }
 }
 
-class Province{
+export class Province{
   constructor(){
     this.Cost = 8;
     this.Victory_Points = 6;
@@ -138,7 +140,7 @@ class Province{
     return 12;
   }
 }
-class Curse{
+export class Curse{
   constructor(){
     this.Cost = 0;
     this.Victory_Points = -1;
@@ -158,7 +160,7 @@ class Curse{
   }
 }
 
-class Village {
+export class Village {
   constructor(){
     this.Cost = 3;
     this.Victory_Points = 0;
@@ -178,7 +180,7 @@ class Village {
   }
 }
 
-class Cellar {
+export class Cellar {
   constructor(){
     this.Cost = 2;
     this.Victory_Points = 0;
@@ -218,7 +220,7 @@ class Cellar {
   }
 }
 
-class Chapel{
+export class Chapel{
   constructor(){
     this.Cost = 2;
     this.Victory_Points = 0;
@@ -252,7 +254,7 @@ class Chapel{
     // }
   }
 }
-class Moat{
+export class Moat{
   constructor(){
     this.Cost = 2;
     this.Victory_Points = 0;
@@ -275,7 +277,7 @@ class Moat{
   }
 }
 
-class Chancellor{
+export class Chancellor{
   constructor(){
     this.Cost = 3;
     this.Victory_Points = 0;
@@ -300,7 +302,7 @@ class Chancellor{
   }
 
 }
-class Woodcutter{
+export class Woodcutter{
   constructor(){
     this.Cost = 3;
     this.Victory_Points = 0;
@@ -320,7 +322,7 @@ class Woodcutter{
   }
 }
 
-class Workshop{
+export class Workshop{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;
@@ -343,7 +345,7 @@ class Workshop{
     // player.Gain(card);
   }
 }
-class Feast{
+export class Feast{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;
@@ -368,7 +370,7 @@ class Feast{
   }
 }
 
-class Militia{
+export class Militia{
   constructor(){
     this.Cost = 4;
     this.Victory_Points = 0;
@@ -397,7 +399,7 @@ class Militia{
     // }
   }
 }
-class Witch{
+export class Witch{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;
@@ -426,7 +428,7 @@ class Witch{
 }
 
 
-class Moneylender{
+export class Moneylender{
   constructor(){
     this.Cost = 4;
     this.Victory_Points = 0;
@@ -454,7 +456,7 @@ class Moneylender{
   }
 }
 
-class Smithy{
+export class Smithy{
   constructor(){
     this.Cost = 4;
     this.Victory_Points = 0;
@@ -474,7 +476,7 @@ class Smithy{
   }
 }
 
-class Throneroom{
+export class Throneroom{
   constructor(){
     this.Cost = 4;
     this.Victory_Points = 0;
@@ -499,7 +501,7 @@ class Throneroom{
   }
 }
 
-class Festival{
+export class Festival{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;
@@ -519,7 +521,7 @@ class Festival{
   }
 }
 
-class Laboratory{
+export class Laboratory{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;
@@ -538,27 +540,7 @@ class Laboratory{
     console.log(player)
   }
 }
-class Laboratory4{
-  constructor(){
-    this.Cost = 5;
-    this.Victory_Points = 0;
-    this.Type = "Action";
-    this.Name = "Laboratory";
-    this.More_Actions = 1;
-    this.More_Buys = 0;
-    this.Buying_Power = 0;
-    this.Draws = 2;
-    this.Description = `The ${this.Name} gives you 2 draws and 1 action`;
-  }
-  PileCount(){
-    return 10;
-  }
-  OnPlay(player){
-    console.log(player)
-  }
-}
-
-class Laboratory2{
+export class Laboratory4{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;
@@ -578,7 +560,27 @@ class Laboratory2{
   }
 }
 
-class Laboratory3{
+export class Laboratory2{
+  constructor(){
+    this.Cost = 5;
+    this.Victory_Points = 0;
+    this.Type = "Action";
+    this.Name = "Laboratory";
+    this.More_Actions = 1;
+    this.More_Buys = 0;
+    this.Buying_Power = 0;
+    this.Draws = 2;
+    this.Description = `The ${this.Name} gives you 2 draws and 1 action`;
+  }
+  PileCount(){
+    return 10;
+  }
+  OnPlay(player){
+    console.log(player)
+  }
+}
+
+export class Laboratory3{
   constructor(){
     this.Cost = 5;
     this.Victory_Points = 0;

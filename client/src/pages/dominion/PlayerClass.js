@@ -1,6 +1,6 @@
+import { Deck } from "./DeckClass"
 
-
-class Player {
+export class Player {
   constructor(name) {
     this.name = name
     this.actions = 1
@@ -35,7 +35,8 @@ class Player {
   }
   display_hand(){
     for (var card of this.hand.cards){
-      $('.player_hand').append(display_card(card))
+      console.log("player is displaying hand", card)
+      // $('.player_hand').append(display_card(card))
     }
   }
 }

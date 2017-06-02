@@ -1,7 +1,7 @@
 import React from "react"
 import logo from './../static/logo.svg';
 import Title from "./Header/Title"
-import { BrowserRouter as Router, Link, Route} from "react-router-dom"
+// import { BrowserRouter as Router, Link, Route} from "react-router-dom"
 
 // import './../App.css';
 
