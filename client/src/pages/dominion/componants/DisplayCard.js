@@ -15,7 +15,7 @@ import React from 'react'
 
 export function DisplayCard(card) {
         return (
-            <div className="click ui button" >
+            <div className="click ui button " >
                 <ul className="card">
                     <li>Name: {card.Name}</li>
                     <li>Cost: {card.Cost}</li>

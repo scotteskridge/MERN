@@ -26,9 +26,19 @@ export default class Dominion extends React.Component {
     constructor(props){
         super(props)
         this.build_board()
+        this.onClick = this.handleClick.bind(this);
         // console.log("props is: ", props)
         // console.log("state is: ", this.state)
     
+    }
+    handleChange(event){
+        console.log("was there an event?", event)
+    }
+      handleClick(event) {
+        const id = event.target
+        console.log("the id is:", id, event)
+        this.build_board()
+        // this.render()
     }
 
     build_board(){
@@ -104,6 +114,7 @@ village = new Village
         return (
             <div>
                 <h1>The Dominion Page</h1>
+                <button className="ui button" id={this.props.id} onClick={this.onClick}>New Game </button>
                
                 <GameState />
                 <BaseCards cards = {this.baseCards}/>

@@ -18,13 +18,13 @@ export default class ActionCards extends React.Component {
         
         var cards_list = this.cards.map((card , index) =>{
                         console.log("trying to loop through 3 coppers", card)
-                        return <li key ={index}>{DisplayCard(card)}</li>;
+                        return <div key ={index}>{DisplayCard(card)}</div>;
                       })
         console.log (cards_list)
 
         return  (
-            <div>
-                <ul>{ cards_list }</ul>
+            <div >
+                <ul className="action">{ cards_list }</ul>
             </div>
         )
     }
