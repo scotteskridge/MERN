@@ -4,7 +4,12 @@ Cool tech:
     take a look at flux and dispatchers https://www.youtube.com/watch?v=MZfCVq5iCBw&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b&index=9#t=35.959125
     take a look at redux https://www.youtube.com/watch?v=1w-oQ-i1XB8&index=15&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b
 
-
+    packages to include
+        https://www.npmjs.com/package/babel-plugin-react-html-attrs
+        ***https://www.npmjs.com/package/babel-plugin-offside-js***
+        try to fix syntax highlighting for jsy https://stackoverflow.com/questions/30775551/how-to-manually-set-language-for-syntax-highlighting-in-visual-studio-code
+        https://code.visualstudio.com/docs/extensions/themes-snippets-colorizers
+        
 long term :
     will want sockets.io
     get npm start to run a better .bat file with mongo and rebuild

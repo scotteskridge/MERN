@@ -1,5 +1,7 @@
 import React from "react"
-import CardComp from "./dominion/CardComp"
+import { TestFunction, CardComp  }  from "./dominion/CardComp"
+
+
 
 export default class Dominion extends React.Component {
     constructor(){
@@ -10,6 +12,7 @@ export default class Dominion extends React.Component {
             <div>
                 <h1>The Dominion Page</h1>
                 <CardComp />
+                {TestFunction()}
             </div>
         )
     }
