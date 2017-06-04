@@ -4,13 +4,16 @@ import  PlayedCards from "./PlayedCards"
 import  PlayerHand from "./PlayerHand"
 
 export default class PlayerDisplay extends React.Component {
+    constructor(props){
+        super(props)
+    }
     render(){
         return (
             <div>
                 <h4>The PlayerDisplay</h4>
-                <PlayerState />
-                <PlayedCards />
-                <PlayerHand />
+                <PlayerState player = {this.props.player} />
+                <PlayedCards played = {this.props.player.played} />
+                <PlayerHand hand = {this.props.player.hand} />
             </div>
         )
     }

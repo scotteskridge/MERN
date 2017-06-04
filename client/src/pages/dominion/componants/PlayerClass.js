@@ -7,6 +7,7 @@ export class Player {
     this.buys = 1
     this.coins = 0
     this.score = 0
+    this.handSize = 5
     this.deck = new Deck
     this.hand = new Deck
     this.played = new Deck
@@ -29,7 +30,7 @@ export class Player {
     return deck.cards.pop()
   }
   draw_hand(){
-    for (var i = 0; i < 5; i++){
+    for (var i = 0; i < this.handSize; i++){
       this.hand.cards.push(this.draw(this.deck))
     }
   }

@@ -21,6 +21,17 @@
 // import Copper from '../../../static/assets/Copper.jpg' //not sure why this doesnt work
 //may want to add an img atribute take a look at header on how to import those
 
+export class AllCards{
+  
+  constructor(){
+    this.AllActions = [Village, Cellar, Chapel, Moat, Chancellor, 
+                Woodcutter, Workshop, Feast, Militia, Witch, 
+                Moneylender, Smithy, Throneroom, Festival,
+                Laboratory, Laboratory3, Laboratory2] 
+    this.BaseCards = [Copper, Silver, Gold, Estate, Duchy, Province, Curse]
+  }
+} 
+
 export class Copper {
   constructor(){
     this.Cost = 1;
@@ -565,7 +576,7 @@ export class Laboratory2{
     this.Cost = 5;
     this.Victory_Points = 0;
     this.Type = "Action";
-    this.Name = "Laboratory";
+    this.Name = "MY NEW OTHER LAB";
     this.More_Actions = 1;
     this.More_Buys = 0;
     this.Buying_Power = 0;
@@ -585,7 +596,7 @@ export class Laboratory3{
     this.Cost = 5;
     this.Victory_Points = 0;
     this.Type = "Action";
-    this.Name = "Laboratory";
+    this.Name = "MY NEW LAB";
     this.More_Actions = 1;
     this.More_Buys = 0;
     this.Buying_Power = 0;

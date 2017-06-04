@@ -1,9 +1,8 @@
 import React from "react"
 import { DisplayCard  }  from "./dominion/componants/DisplayCard"
-import { Deck } from "./dominion/DeckClass"
-import { Village, Cellar, Chapel, Moat, Chancellor, Woodcutter, Workshop, Feast,
-        Militia, Witch, Moneylender, Smithy, Throneroom, Festival, Laboratory,
-        Copper, Silver, Gold, Estate, Duchy, Province, Curse } from "./dominion/componants/cards.js"
+import { Deck } from "./dominion/componants/DeckClass"
+import { AllCards } from "./dominion/componants/cards.js"
+import { Game } from "./dominion/componants/GameClass.js"
 import GameState from "./dominion/displays/GameState"
 import BaseCards from "./dominion/displays/BaseCards"
 import ActionCards from "./dominion/displays/ActionCards"
@@ -13,56 +12,91 @@ import PlayerDisplay from "./dominion/displays/PlayerDisplay"
 
 
 export default class Dominion extends React.Component {
-    // allActions = []
-    card_list = []
-    baseCards = []
-    actionCards = []
-    aCopper = new Copper()
-    numActionCards = 10
-    AllActions = [Village, Cellar, Chapel, Moat, Chancellor, 
-                        Woodcutter, Workshop, Feast, Militia, Witch, 
-                        Moneylender, Smithy, Throneroom, Festival, Laboratory]
-
+    num_of_players
+    // INIT_STATE = ['card_list', 'baseCards', 'actionCards']
+    
+    
     constructor(props){
         super(props)
-        this.build_board()
+        this.AllCards = new AllCards // I'm not sure why I actually needed to instantiate a new instance but it worked
+        this.game = new Game //this may need to go into state?
         this.onClick = this.handleClick.bind(this);
-        // console.log("props is: ", props)
-        // console.log("state is: ", this.state)
-    
+        console.log("the state is:", this.state)
+        this.state = {
+            card_list: [],
+            now : new Date(),
+            baseCards: [],
+            actionCards: [],
+            game : new Game
+        }
+
+
     }
+    checkState(event){
+        console.log("the state is:", this.state)
+    }
+    
+    next_player(){
+        this.game.next_player()
+    }
+
+
+    componentDidMount(){
+    this.timerID = setInterval(
+            () => this.tick(),
+            1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerID);
+    }
+    tick() {
+        this.setState({
+            now: new Date()
+        });
+     }
+
+    
     handleChange(event){
         console.log("was there an event?", event)
     }
-      handleClick(event) {
-        const id = event.target
-        console.log("the id is:", id, event)
-        this.build_board()
+    handleClick(event) {
+        // const id = event.target
+        // console.log("the id is:", id, event)
+        this.start_new_game()
         // this.render()
     }
 
-    build_board(){
+    start_new_game(){
+        this.AllCards = new AllCards
+        this.game = new Game
+        this.game.setupPlayers() //setting players gives them starting hand as well
+        
         this.assign_baseCards()
         this.choose_actions()
+        this.game.initGame()
+        this.setState({game : this.game})
+               
     }
 
-    // make_card(cardname){
-    //     return new cardname
-    // }
-
+    //I got rid of choose actions and assign actions and combined to one.
+    //may need to break them apart again to allow for game update
     choose_actions(){
         let allActions = new Deck()
-        for (let cardClass of this.AllActions) {
+        
+        for (let cardClass of this.AllCards.AllActions) {
             allActions.cards.push(new cardClass)
         }
-        // for (var card of list){
-        //   action_list.cards.push(make_card(card))
-        // }
+       
         allActions.shuffle()
-        for(let i=0; i<this.numActionCards; i++ ){
-            this.actionCards.push(allActions.cards[i])
-        }
-    
+        console.log("num of cards is",this.game.numActionCards)
+        allActions.cards.length = this.game.numActionCards
+        this.setState({actionCards : allActions.cards })
+    // setState((previousState, currentProps) => {
+    //     console.log(previousState, currentProps)
+    //       return {counter: previousState.counter + 1};
+    //   });
 
 }
 // assign_action(){
@@ -91,37 +125,47 @@ export default class Dominion extends React.Component {
 }
 
 assign_baseCards(){
-  
-    this.baseCards.push(new Copper)
-    this.baseCards.push(new Silver)
-    this.baseCards.push(new Gold)
-    this.baseCards.push(new Estate)
-    this.baseCards.push(new Duchy)
-    this.baseCards.push(new Province)
-    this.baseCards.push(new Curse)
+    let baseCards = []    
+    for (let card of this.AllCards.BaseCards){
+        baseCards.push(new card)
+    }
+    
+    this.setState({baseCards : baseCards })
+    // this.state.baseCards = baseCards
 
 }
 
 
 
-village = new Village
 
 
 
 
+//for right now the game is going to be hot seat so the Player display needs to be given
+//the active players hand and played cards... going forward it will only need the 
+//logged in player and I'll use sockets for each active player
 
     render(){
         return (
             <div>
                 <h1>The Dominion Page</h1>
+                <h2>It is {this.state.now.toLocaleTimeString()}.</h2>
+                <button className="ui button" onClick={this.checkState.bind(this)}>Check State </button>
                 <button className="ui button" id={this.props.id} onClick={this.onClick}>New Game </button>
+                <button className="ui button" onClick={this.next_player.bind(this)}>Next Player </button>
+
+                <GameState game = {this.state.game}/>
                
-                <GameState />
-                <BaseCards cards = {this.baseCards}/>
-                <ActionCards cards = {this.actionCards}/>
-                <PlayerDisplay /> 
+                <BaseCards cards = {this.state.baseCards}/>
+                <ActionCards cards = {this.state.actionCards}/>
+                <PlayerDisplay player = {this.state.game.current_player} /> 
                 
             </div>
         )
     }
+}
+
+
+if (require.main === module){
+    console.log("this is main")
 }

@@ -58,7 +58,7 @@ export default class App extends Component {
   
       
          
-         <button className="ui button" onClick = {this.navigate.bind(this)}>Domion Nav</button>
+        
         
         
       </div>

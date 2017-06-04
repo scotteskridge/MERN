@@ -7,8 +7,9 @@ export default class BaseCards extends React.Component {
     cards = []
     constructor(props){
         super(props)
-        this.cards= this.props.cards
-        // console.log("Base cards has this props.cards", this.props.cards )
+        // this.cards= this.props.cards
+        console.log('basecards props is:' , props)
+        console.log("Base cards has this props.cards", this.props.cards )
 
     }
 
@@ -16,13 +17,10 @@ export default class BaseCards extends React.Component {
 
     render() {
         
-        var cards_list = this.cards.map((card , index) =>{
-                        console.log("trying to loop through 3 coppers", card)
-                        return <div key ={index}>{DisplayCard(card)}</div>;
+        var cards_list = this.props.cards.map((card , index) =>{
+            return <div key ={index}>{DisplayCard(card)}</div>;
                       })
-        console.log (cards_list)
-
-        return  (
+         return  (
             <div>
                 <ul className="basic">{ cards_list }</ul>
             </div>

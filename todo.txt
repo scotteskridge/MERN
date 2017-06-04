@@ -1,5 +1,6 @@
 Cool tech:
     https://www.npmjs.com/package/react-project
+    lodash
     take a look at class names https://github.com/JedWatson/classnames
     take a look at flux and dispatchers https://www.youtube.com/watch?v=MZfCVq5iCBw&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b&index=9#t=35.959125
     take a look at redux https://www.youtube.com/watch?v=1w-oQ-i1XB8&index=15&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b
@@ -10,14 +11,6 @@ Cool tech:
         try to fix syntax highlighting for jsy https://stackoverflow.com/questions/30775551/how-to-manually-set-language-for-syntax-highlighting-in-visual-studio-code
         https://code.visualstudio.com/docs/extensions/themes-snippets-colorizers
         
-long term :
-    will want sockets.io
-    get npm start to run a better .bat file with mongo and rebuild
-    ensure that babel is working???
-    incorporate offside-jsy
-    figure out .js vs .jsx
-    learn lodash
-    use object.assign({}, foo) to get around passing objects by refrerence
 
 
 done:
@@ -29,15 +22,48 @@ done:
     onclick and onHover events
     import and use semantic
     incorporate routing
-
-rightnow:
     put some cards on screen
     pull in all of your dominion code
+    finish new game button
+    dynamic screen reresh by adjusting state <-- dont try to work around state and props just use em
+    all cards including played and draw hand
+
+rightnow:
+    fix played cards
+    fix updating first players draw hand display something is breaking in the timeing
+    add stats for player and game
+    initialize game loop
+    add onclick actions
+    
     
     manage data with props and state and context
 
+near term:
+    add card on play methods
+    manage player log in 
+
+midterm:
+    hot seat play
+    to get persitant state looks like I'm going to need a store like flux or redux
+    look at creating a object called data store and useing that instance inleu of redux
+    or use local storage
+
+
+
+long term :
+    save player stats to db
+    save game state (maybe to database?)
+    will want sockets.io
+    get npm start to run a better .bat file with mongo and rebuild
+    ensure that babel is working???
+    incorporate offside-jsy
+    figure out .js vs .jsx
+    learn lodash
+    use object.assign({}, foo) to get around passing objects by refrerence
+
 
 For fun:
+    add mouse hover or right click inspect of cards
     grab some card art http://wiki.dominionstrategy.com/index.php/Isotropic_art_gallery
     
 

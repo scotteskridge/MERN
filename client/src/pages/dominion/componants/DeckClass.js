@@ -1,4 +1,4 @@
-import { Copper, Estate } from "./componants/cards.js"
+import { Copper, Estate } from "./cards.js"
 
 export class Deck {
   constructor(card){
