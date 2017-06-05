@@ -1,0 +1,22 @@
+{
+    "name": "dark-plus-plus-theme",
+    "displayName": "dark-plus-plus-theme",
+    "description": "dark-plus-plus-theme with decorators",
+    "version": "0.0.1",
+    "publisher": "DryWolf",
+    "engines": {
+        "vscode": "^1.12.0"
+    },
+    "categories": [
+        "Themes"
+    ],
+    "contributes": {
+        "themes": [
+            {
+                "label": "dark-plus with decorators",
+                "uiTheme": "vs-dark",
+                "path": "./themes/dark-plus with decorators-color-theme.json"
+            }
+        ]
+    }
+}

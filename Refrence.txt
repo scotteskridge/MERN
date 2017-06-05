@@ -1,0 +1,27 @@
+
+/// MOBX ///
+https://mobx.js.org/best/decorators.html -- mobx stuff
+https://www.robinwieruch.de/mobx-react/
+
+might look at this to allow some flexibility 
+https://www.npmjs.com/package/custom-react-scripts
+https://www.npmjs.com/package/custom-react-scripts#-configuration-options
+https://medium.com/@timarney/but-i-dont-wanna-eject-3e3da5826e39
+https://github.com/timarney/react-app-rewired
+
+
+https://mobx.js.org/refguide/api.html
+observable(value)
+computed(() => expression)
+computed(() => expression, (newValue) => void)
+computed(() => expression, options)
+action(fn)
+action(name, fn)
+observer(React.createClass({ ... }))
+observer((props, context) => ReactElement)
+observer(class MyComponent extends React.Component { ... })
+
+autorun(debugname?, () => { sideEffect })
+when(debugname?, () => condition, () => { sideEffect })
+autorunAsync(debugname?, () => { sideEffect }, delay)
+expr(() => someExpression). Just a shorthand for computed(() => someExpression).get()

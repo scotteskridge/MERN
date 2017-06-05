@@ -16,13 +16,13 @@ import App from './App';
 // import Welcome from "./pages/Welcome"
 // import Layout from "./componants/Layout"
 
-console.log(store)
+
 
 const root = document.getElementById('root')
 
 
 //router needs history = {hashHistory}
 ReactDOM.render(
-    <App />,    root );
+    <App  store = {store}/>,    root );
 
 registerServiceWorker();

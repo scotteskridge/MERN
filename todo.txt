@@ -2,8 +2,7 @@ Cool tech:
     https://www.npmjs.com/package/react-project
     lodash
     take a look at class names https://github.com/JedWatson/classnames
-    take a look at flux and dispatchers https://www.youtube.com/watch?v=MZfCVq5iCBw&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b&index=9#t=35.959125
-    take a look at redux https://www.youtube.com/watch?v=1w-oQ-i1XB8&index=15&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b
+   
     symlinks - https://gist.github.com/branneman/8048520, https://github.com/DSKrepps/requireFrom, or maybe make a lib file similar to how you 
         handles cards and just dumb everything into there
     !!!http://moduscreate.com/es6-es2015-import-no-relative-path-webpack/  https://webpack.js.org/ some sample code is in
@@ -33,9 +32,22 @@ done:
     finish new game button
     dynamic screen reresh by adjusting state <-- dont try to work around state and props just use em
     all cards including played and draw hand
+    add in redux store to make keeping track of cards easier -switching to mobx
+    take a look at flux and dispatchers https://www.youtube.com/watch?v=MZfCVq5iCBw&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b&index=9#t=35.959125
+    take a look at redux https://www.youtube.com/watch?v=1w-oQ-i1XB8&index=15&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b
+    install and edit rewire to allow for mobx decorators (yes this would have been WAAAAY easier to jus tmanually adjust the config in node modules)
+    fix vs code error with ts config (which is funny that its js but whatever)
+    get a mobx store working
+
 
 rightnow:
-    add in redux store to make keeping track of cards easier
+    finish mobx tutorial for full front end crud
+    make a save game button to push to local storage
+    have new game clear saved gaem in local storage
+    save game state in mobx
+    use appstore to allow hand cards to go to played cards
+    do same with on click
+    symlinks needs to be next i think
     fix played cards
     fix updating first players draw hand display something is breaking in the timeing
     add stats for player and game
@@ -49,6 +61,7 @@ rightnow:
 near term:
     add card on play methods
     manage player log in 
+    figure out the difference between js and jsx
 
 midterm:
     hot seat play
@@ -73,6 +86,12 @@ long term :
 For fun:
     add mouse hover or right click inspect of cards
     grab some card art http://wiki.dominionstrategy.com/index.php/Isotropic_art_gallery
+
+
+Notes:
+    right now to use @ decorators (which is most mobx tutts) you need to add the transform-decorators-legacy
+    yourself in node_modules/react-scripts/config/babel.dev.js, as I don't want to go tinkering around with
+    the out of the box code just yet just use the observer functions instead of the decorators
     
 
     
