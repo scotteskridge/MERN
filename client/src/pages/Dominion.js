@@ -56,7 +56,8 @@ export default class Dominion extends React.Component {
             now: new Date()
         });
      }
-
+     //be aware the setState({object to update}, callBack to run aftwards) has abuilt in .then call back with
+     //no response 
     
     handleChange(event){
         console.log("was there an event?", event)
@@ -76,7 +77,7 @@ export default class Dominion extends React.Component {
         this.assign_baseCards()
         this.choose_actions()
         this.game.initGame()
-        this.setState({game : this.game})
+        this.setState({game : this.game}, () => console.log("after set state the state is:", this.state))
                
     }
 

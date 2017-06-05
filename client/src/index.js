@@ -6,6 +6,7 @@ import registerServiceWorker from './registerServiceWorker';
 // import './index.css';
 import 'semantic-ui-css/semantic.min.css';
 import './static/App.css';
+import store from "./AppStore"
 
 
 import App from './App';
@@ -15,7 +16,7 @@ import App from './App';
 // import Welcome from "./pages/Welcome"
 // import Layout from "./componants/Layout"
 
-
+console.log(store)
 
 const root = document.getElementById('root')
 

@@ -4,6 +4,12 @@ Cool tech:
     take a look at class names https://github.com/JedWatson/classnames
     take a look at flux and dispatchers https://www.youtube.com/watch?v=MZfCVq5iCBw&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b&index=9#t=35.959125
     take a look at redux https://www.youtube.com/watch?v=1w-oQ-i1XB8&index=15&list=PLoYCgNOIyGABj2GQSlDRjgvXtqfDxKm5b
+    symlinks - https://gist.github.com/branneman/8048520, https://github.com/DSKrepps/requireFrom, or maybe make a lib file similar to how you 
+        handles cards and just dumb everything into there
+    !!!http://moduscreate.com/es6-es2015-import-no-relative-path-webpack/  https://webpack.js.org/ some sample code is in
+        e:/1 code lib
+    you may just need to take a webpack tutt
+    https://www.fullstackreact.com/p/using-webpack-with-create-react-app/
 
     packages to include
         https://www.npmjs.com/package/babel-plugin-react-html-attrs
@@ -29,11 +35,13 @@ done:
     all cards including played and draw hand
 
 rightnow:
+    add in redux store to make keeping track of cards easier
     fix played cards
     fix updating first players draw hand display something is breaking in the timeing
     add stats for player and game
     initialize game loop
     add onclick actions
+    move files over to classes folder
     
     
     manage data with props and state and context

@@ -15,20 +15,24 @@ export class Game {
     this.num_of_players = 0
     this.player_num = 0
     this.current_player = ""
-    
-    
+    this.turn = 0 //may wan this for a time machine
     this.phase = ["Action" , "Buy" , "Cleanup"]
     this.current_phase = ""
     this.numActionCards = 10 //this may change based on number of players
   }
 
   setupPlayers(){
+    //this breaks if you cancle out of the prompt, when i transition to a pretty modal
+    //make sure I have a pretty fail case as well
     //create new players on game start
     this.num_of_players = parseInt(prompt("Please enter the number of new players:"))
-    for (let i = 0; i < this.num_of_players; i++){
-      let name = prompt("Please enter the players name:")
-      let player = new Player(name)
-      this.players.push(player)    
+    if(this.num_of_players !=0){
+      for (let i = 0; i < this.num_of_players; i++){
+        let name = prompt("Please enter the players name:")
+        let player = new Player(name)
+        this.players.push(player)    
+      }
+
     }
   }
 
