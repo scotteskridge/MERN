@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 // import { IndexRoute, Switch, Router, Route, hashHistory } from "react-router" //need history
@@ -6,7 +7,8 @@ import registerServiceWorker from './registerServiceWorker';
 // import './index.css';
 import 'semantic-ui-css/semantic.min.css';
 import './static/App.css';
-import store from "./AppStore"
+import store from "./store"
+
 
 
 import App from './App';

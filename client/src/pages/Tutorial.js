@@ -1,8 +1,8 @@
 import React from "react"
-import Body from "../componants/Body"
-import Footer from "../componants/Footer"
-import Header from "../componants/Header"
-import Data from "../componants/Data"
+import Body from "./tutorial/Body"
+import Footer from "./tutorial/Footer"
+import Header from "./tutorial/Header"
+import Data from "./tutorial/Data"
 // import { BrowserRouter as Router, Link, Route} from "react-router-dom"
 
 

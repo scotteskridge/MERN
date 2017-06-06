@@ -1,16 +1,19 @@
 import React from "react"
+import { observer, inject } from "mobx-react"
 import { DisplayCard  }  from "./dominion/componants/DisplayCard"
-import { Deck } from "./dominion/componants/DeckClass"
-import { AllCards } from "./dominion/componants/cards.js"
-import { Game } from "./dominion/componants/GameClass.js"
+import { Deck } from "./dominion/classes/DeckClass"
+import { AllCards } from "./dominion/classes/AllCards"
+import { Game } from "./dominion/classes/GameClass"
 import GameState from "./dominion/displays/GameState"
 import BaseCards from "./dominion/displays/BaseCards"
 import ActionCards from "./dominion/displays/ActionCards"
 import PlayerDisplay from "./dominion/displays/PlayerDisplay"
+import store from "../store"
 // let cards = require("./cards.js")
 
-
-
+//its important to inject and then pull out of props.store to avoid
+//2 way data binding clashes
+@inject("store") @observer
 export default class Dominion extends React.Component {
     num_of_players
     // INIT_STATE = ['card_list', 'baseCards', 'actionCards']
@@ -18,19 +21,13 @@ export default class Dominion extends React.Component {
     
     constructor(props){
         super(props)
-        this.AllCards = new AllCards // I'm not sure why I actually needed to instantiate a new instance but it worked
-        this.game = new Game //this may need to go into state?
+        // this.AllCards = new AllCards // I'm not sure why I actually needed to instantiate a new instance but it worked
+        // this.game = new Game //this may need to go into state?
         this.onClick = this.handleClick.bind(this);
-        console.log("the state is:", this.state)
+        // console.log("the store is:", store)
         this.state = {
-            card_list: [],
-            now : new Date(),
-            baseCards: [],
-            actionCards: [],
-            game : new Game
+          now : new Date(),
         }
-
-
     }
     checkState(event){
         console.log("the state is:", this.state)
@@ -38,6 +35,10 @@ export default class Dominion extends React.Component {
     
     next_player(){
         this.game.next_player()
+    }
+    save_game(game){
+        store.save_game(game)
+        
     }
 
 
@@ -65,41 +66,15 @@ export default class Dominion extends React.Component {
     handleClick(event) {
         // const id = event.target
         // console.log("the id is:", id, event)
-        this.start_new_game()
+        store.current_game.start_new_game()
         // this.render()
     }
 
-    start_new_game(){
-        this.AllCards = new AllCards
-        this.game = new Game
-        this.game.setupPlayers() //setting players gives them starting hand as well
-        
-        this.assign_baseCards()
-        this.choose_actions()
-        this.game.initGame()
-        this.setState({game : this.game}, () => console.log("after set state the state is:", this.state))
-               
-    }
+
 
     //I got rid of choose actions and assign actions and combined to one.
     //may need to break them apart again to allow for game update
-    choose_actions(){
-        let allActions = new Deck()
-        
-        for (let cardClass of this.AllCards.AllActions) {
-            allActions.cards.push(new cardClass)
-        }
-       
-        allActions.shuffle()
-        console.log("num of cards is",this.game.numActionCards)
-        allActions.cards.length = this.game.numActionCards
-        this.setState({actionCards : allActions.cards })
-    // setState((previousState, currentProps) => {
-    //     console.log(previousState, currentProps)
-    //       return {counter: previousState.counter + 1};
-    //   });
-
-}
+    
 // assign_action(){
 //   this.actionCards = this.choose_actions()
 //   for (var card of this.actionCards){
@@ -125,16 +100,11 @@ export default class Dominion extends React.Component {
           </div>`
 }
 
-assign_baseCards(){
-    let baseCards = []    
-    for (let card of this.AllCards.BaseCards){
-        baseCards.push(new card)
-    }
-    
-    this.setState({baseCards : baseCards })
-    // this.state.baseCards = baseCards
+ change_name(event){
+    this.props.store.current_game.current_player.name = event.target.value
+  }
 
-}
+
 
 
 
@@ -147,20 +117,24 @@ assign_baseCards(){
 //logged in player and I'll use sockets for each active player
 
     render(){
+        const { current_game } = this.props.store
         return (
             <div>
                 <h1>The Dominion Page</h1>
                 <h2>It is {this.state.now.toLocaleTimeString()}.</h2>
-                <button className="ui button" onClick={this.checkState.bind(this)}>Check State </button>
-                <button className="ui button" id={this.props.id} onClick={this.onClick}>New Game </button>
+                <button className="ui button" onClick={store.game_status.bind(this)}>Check GameStore </button>
+                <button className="ui button" onClick={store.new_game.bind(this)}>New Game </button>
+                <button className="ui button" onClick={this.save_game.bind(this, current_game)}>Save Game </button>
                 <button className="ui button" onClick={this.next_player.bind(this)}>Next Player </button>
 
-                <GameState game = {this.state.game}/>
+                <GameState game = {current_game}/>
                
-                <BaseCards cards = {this.state.baseCards}/>
-                <ActionCards cards = {this.state.actionCards}/>
-                <PlayerDisplay player = {this.state.game.current_player} /> 
-                
+                <BaseCards cards = {current_game.base_cards}/>
+                <ActionCards cards = {store.current_game.chosen_actions.cards}/>
+                <PlayerDisplay  /> 
+
+                <input className = "current_player_name" value = {current_game.current_player.name} onChange={this.change_name.bind(this)} />
+                {current_game.current_player.name}
             </div>
         )
     }

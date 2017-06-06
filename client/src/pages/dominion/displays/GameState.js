@@ -1,26 +1,30 @@
 import React from "react"
+import store from "../../../store"
+import { inject } from "mobx-react"
 
+@inject("store")
 export default class GameState extends React.Component {
 // why dont I need to declare my vars here?
 //would be nice to have the scores light up based on active player
 	constructor(props){
 		super(props)
-		console.log("Game state has props", this.props)
+		// console.log("Game state has props", this.props)
 	}
 
 	displayProp(){
-		console.log("Game state has props", this.props)
+		console.log("Current Player from injecting is:", this.props.store.current_game.current_player)
+		console.log("played cards from store is:", store.current_game.current_player.played.cards)
 	}
 
 	render(){
-		let score_list = this.props.game.score_tally.map((score , index) =>{
+		let score_list = this.props.store.current_game.score_tally.map((score , index) =>{
             return <div key ={index}>{score.player} {score.score}</div>;
         })
         
 		return (
 			<div>
 				<h4>The GameState</h4>
-        <button className="ui button" onClick={this.displayProp.bind(this)}>displayProp </button>
+        <button className="ui button" onClick={this.displayProp.bind(this)}>display store </button>
 
 				<ul>
 					<li> </li>

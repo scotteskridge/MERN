@@ -1,4 +1,6 @@
 import React from "react"
+import TodoList from "./TodoList"
+import store from "../../store"
 
 
 export default class Body extends React.Component {
@@ -36,6 +38,7 @@ export default class Body extends React.Component {
         )}
 
         <h4>{this.classMethod()}</h4>
+        <TodoList store = {store} />
        
         
       </div>

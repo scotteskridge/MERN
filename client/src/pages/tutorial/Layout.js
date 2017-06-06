@@ -32,9 +32,11 @@ export default class Layout extends React.Component {
             <div>
                 <Header changeTitle={this.changeTitle.bind(this)} title={this.state.title}/>
                
-                <Body />
+                
                 <Data changeTitle={this.changeTitle.bind(this)} title={this.state.title}/>
-              
+                <Body />
+                <br/>
+                <hr />
                 <Footer />
             </div>
         )

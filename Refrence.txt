@@ -2,6 +2,8 @@
 /// MOBX ///
 https://mobx.js.org/best/decorators.html -- mobx stuff
 https://www.robinwieruch.de/mobx-react/
+https://github.com/mobxjs/mobx-react
+https://www.npmjs.com/package/mobx-react-inject
 
 might look at this to allow some flexibility 
 https://www.npmjs.com/package/custom-react-scripts

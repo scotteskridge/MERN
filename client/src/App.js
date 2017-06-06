@@ -1,31 +1,26 @@
 import React, { Component } from 'react';
-import { observer } from "mobx-react"
+import { observer, Provider } from "mobx-react"
 
-import { BrowserRouter as Router, Route, Switch} from "react-router-dom"
-
-import Layout from './componants/Layout';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
+import store  from "./store"
+import Layout from './pages/tutorial/Layout';
 import Dominion from "./pages/Dominion"
 import Tutorial from "./pages/Tutorial"
 import Welcome from "./pages/Welcome"
-import Nav from "./componants/Nav"
+import Nav from "./pages/tutorial/Nav"
 
 // import './App.css';
 
 //this is likely one extra layer of wrappI dont need may need to move
 //alyout to the app level... or just do away with layout not sure yet
 
-//I'm pretty sure I'm going to keep my redux store at this app level, but I may modularize it out and then
-//import it not sure yet, but I think that the reducer functions and store will all need to be
-//methods and attributes of App class, and that I'll include app in the componant level and run
-// the app reducer methods from the child leaves. I wonder if I need to .bind(this) at this level 
-//not sure yet
-
-
-
-
-
-
-
+//learning react-provider with stores see here: http://frontendinsights.com/connect-mobx-react-router/
+//not sure I need mroe than one store but see this code if I do
+// import { Provider } from 'mobx-react';
+// import store1 from './stores/store1';
+// import store2 from './stores/store2';
+ 
+// const stores = { store1, store2 };
 
 
 export default class App extends Component {
@@ -41,8 +36,6 @@ export default class App extends Component {
   // app = document.getElementsByClassName("App")
   constructor(props){
     super(props)
-    
-    
   }
   
 
@@ -54,7 +47,7 @@ export default class App extends Component {
     
   }
   navigate(){
-    console.log(this.props)
+    // console.log(this.props)
     this.props.history.push("/")
   }
 
@@ -63,27 +56,23 @@ export default class App extends Component {
     //   this.setState({name : "State changed"})
     // }, 2000)
     return (
-     <Router>
-        <div  className="App">
-          <Nav />
-          <Switch>
-            <Route exact path="/" component={Layout}/>
-            <Route path="/dominion" component={Dominion}/>
-            <Route path="/welcome" component={Welcome}/>
-            <Route path="/tutorial" component={Tutorial}/>
-            <Route render={() =>{
-              return <p> Not Found </p>
-               }
-            } />
-          </Switch>
-  
-      
-         
-        
-        
-        
-      </div>
-    </Router>
+      <Provider store = {store}>  
+        <Router>
+            <div  className="App">
+              <Nav />
+              <Switch>
+                <Route exact path="/" component={Layout}/>
+                <Route path="/dominion" component={Dominion}/>
+                <Route path="/welcome" component={Welcome}/>
+                <Route path="/tutorial" component={Tutorial}/>
+                <Route render={() =>{
+                  return <p> Not Found </p>
+                  }
+                } />
+              </Switch>
+          </div>
+        </Router>
+      </Provider>
     );
   }
 }

@@ -1,4 +1,4 @@
-// console.log('User controller');
+console.log('User controller');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 

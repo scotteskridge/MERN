@@ -38,27 +38,30 @@ done:
     install and edit rewire to allow for mobx decorators (yes this would have been WAAAAY easier to jus tmanually adjust the config in node modules)
     fix vs code error with ts config (which is funny that its js but whatever)
     get a mobx store working
-
-
-rightnow:
-    finish mobx tutorial for full front end crud
-    make a save game button to push to local storage
-    have new game clear saved gaem in local storage
+    finish mobx tutorial for full front end cruds
     save game state in mobx
     use appstore to allow hand cards to go to played cards
     do same with on click
-    symlinks needs to be next i think
     fix played cards
     fix updating first players draw hand display something is breaking in the timeing
+    add onclick actions
+
+
+
+rightnow:
+    there is a bug in moving cards to played... none of the stats are comeing over and it's deleting the score 
+    it looks like it has somethign to do with mobx mutating the card object into observable arrays   
     add stats for player and game
     initialize game loop
-    add onclick actions
+
     move files over to classes folder
     
     
     manage data with props and state and context
 
 near term:
+    make a save game button to push to local storage
+    have new game clear saved game in local storage
     add card on play methods
     manage player log in 
     figure out the difference between js and jsx
@@ -72,6 +75,8 @@ midterm:
 
 
 long term :
+    import routes to avoid from "../../../garbage" ... my first attempt didnt work come back to this later
+    symlinks needs to be next i think
     save player stats to db
     save game state (maybe to database?)
     will want sockets.io
