@@ -27,3 +27,33 @@ autorun(debugname?, () => { sideEffect })
 when(debugname?, () => condition, () => { sideEffect })
 autorunAsync(debugname?, () => { sideEffect }, delay)
 expr(() => someExpression). Just a shorthand for computed(() => someExpression).get()
+
+
+
+
+for right click its the context menu: https://stackoverflow.com/questions/4235426/how-can-i-capture-the-right-click-event-in-javascript
+  Use the oncontextmenu event.
+
+Here's an example:
+
+<div oncontextmenu="javascript:alert('success!');return false;">
+    Lorem Ipsum
+</div>
+And using event listeners:
+
+el.addEventListener('contextmenu', function(ev) {
+    ev.preventDefault();
+    alert('success!');
+    return false;
+}, false);
+
+or this
+  function rightclick() {
+    var rightclick;
+    var e = window.event;
+    if (e.which) rightclick = (e.which == 3);
+    else if (e.button) rightclick = (e.button == 2);
+    alert(rightclick); // true or false, you can trap right click here by if comparison
+}
+https://www.w3schools.com/jsref/event_button.asp
+https://www.sitepoint.com/building-custom-right-click-context-menu-javascript/

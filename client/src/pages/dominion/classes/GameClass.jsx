@@ -11,53 +11,61 @@ import { AllCards } from "./AllCards.js"
 import { Deck } from "./DeckClass"
 import { autorun, observable, computed, action } from "mobx"
 
+//i need a way to tie cards to piles and piles need a pile count... does this actually need
+//to be n seperate instances of a card stored in an array? or can I simply track the remain cards seperatly
+// it will be simpler to use the deck class even though piles could be simpler
+
 
 export class Game {
   @observable current_player = new Player
   @observable game_over = false
+  @observable num_piles_to_end = 3
   @observable initialize = false
   @observable players = []
   @observable score_tally = []
   @observable num_of_players = 0
   @observable player_num = 0
   @observable current_player = new Player
-  @observable turn = 0 //may wan this for a time machine
+  @observable turn = 0 //may want this for a time machine
   @observable phase = ["Action" , "Buy" , "Cleanup"]
   @observable current_phase = ""
   @observable numActionCards = 10 //this may change based on number of players
-  @observable AllCards = new AllCards
-  @observable base_cards = []  
+  // @observable AllCards = new AllCards
+  @observable base_cards = new Deck 
   @observable chosen_actions = new Deck()
 
   constructor(){
     this.game_over = false
+    this.num_piles_to_end = 3 //this is here to accomodate more than 4 players
     this.initialize = false
     this.players = []
     this.score_tally = []
     this.num_of_players = 0
     this.player_num = 0
     this.current_player = new Player
-    this.turn = 0 //may wan this for a time machine
+    this.turn = 0 //mayt wan this for a time machine
     this.phase = ["Action" , "Buy" , "Cleanup"]
     this.current_phase = ""
     this.numActionCards = 10 //this may change based on number of players
     this.AllCards = new AllCards
-    this.base_cards = []  
-    this.chosen_actions = new Deck()
+    this.base_cards = [] //needs to be an array of decks
+    this.action_cards = []
+    this.chosen_actions = [] //needs to be an array of decks
 
     // console.log("created a new game object")
     // console.log(this.allCards)
     // this.start_new_game()
   }
 
+//////////////// INIT METHODS ///////////////////////////
   start_new_game(){
     // console.log("starting a new game")
     // this.allCards = new AllCards
     this.setupPlayers() 
+    this.initGame() //needs to be before choose_actions to get the right num of piles
     
     this.assign_base_cards()
     this.choose_actions()
-    this.initGame()
     // this.save_game(this.game)
             
 }
@@ -82,27 +90,105 @@ export class Game {
 
     }
   }
-
   initGame(){
     if (this.num_of_players > 4){
       this.numActionCards = 6 + this.num_of_players
+      this.num_piles_to_end = this.num_of_players -1
     }
     this.current_player = this.players[0]
     this.current_phase = this.phase[0]
+    this.num_piles_to_end
     this.update_score()
     
   }
-  
-  next_player(){
-    // console.log("about to next player", this)
-    this.player_num +=1
-    if (this.player_num == this.players.length){
-      this.player_num = 0
+  assign_base_cards(){
+    // this.base_cards = [] 
+    // this.AllCards = new AllCards
+    for (let card of this.AllCards.BaseCards){
+      let thiscard = new card
+      let pile = new Deck
+      for(let i=0; i < thiscard.pile_count; i++){
+        pile.add_to(new card)
+      }
+      this.base_cards.push(pile)
     }
-    this.current_player = this.players[this.player_num]
-    this.current_player.draw_hand()
-    // this.update_score()
-    return this.player_num
+    // console.log("turning base cards into an array of piles",this.base_cards)  
+  }
+  choose_actions(){
+    this.chosen_actions = new Deck()
+    for (let cardClass of this.AllCards.AllActions) {
+        this.chosen_actions.add_to(cardClass)
+    }   
+    this.chosen_actions.shuffle()
+    this.chosen_actions.cards.length = this.numActionCards
+    // console.log("from choose actions the chosen_actions are", this.chosen_actions)
+    for (let card of this.chosen_actions.cards){
+      let thiscard = new card
+      let pile = new Deck
+      for(let i=0; i < thiscard.pile_count; i++){
+        pile.add_to(new card)
+      }
+      this.action_cards.push(pile)
+      // console.log("from choose actions the action_cards are", this.action_cards)
+    }
+  }
+
+  
+  //////////////// ACTION PHASE METHODS ///////////////////////////
+  @action end_action(){
+    this.current_player.play_treasures()
+    this.current_player.button_text="End Turn"
+    this.current_player.feedback = "Select a card to buy"
+    this.current_phase = "Buy"
+  }
+  //////////////// BUY PHASE METHODS ///////////////////////////
+  @action end_buy(){
+    //Change feeback to be ready for next turn
+    this.current_player.feedback = "Select a card to play" 
+    this.current_phase = "Cleanup"
+    this.current_player.end_turn()
+    this.cleanup()
+  }
+
+  //////////////// CLEANUP PHASE METHODS ///////////////////////////
+  //current player discards everything
+  //update score
+  //check for end game condition ie emptypiles
+  //start next players turn
+  //this is everything that should happen during cleanup
+
+  @action cleanup(){
+    this.check_end_game()
+    this.update_score()
+    this.current_phase = "Action"
+    this.next_player()
+    this.turn += 1
+  }
+
+  check_end_game(){
+    //ok I could likely keep a running total of empty decks and subscribe to it 
+    //and then end the game at that point but for the time being I'm just going to do
+    //a recount every cleanup
+    console.log("counting up all of the piles to see if game is over")
+    if(this.num_piles_to_end <=0 ){
+      this.update_score()
+      let winner = {score: 0, player: new Player}
+      for(let player of this.players){
+        if(player.score >= winner.score){
+          winner.score = player.score
+          winner.player = player
+        }
+      }
+      alert(`${winner.player.name} Won the game with ${winner.score} points!`)
+    }
+    // let emptypiles = this.num_piles_to_end
+    // for(let deck of base_cards){
+    //   if(deck.count <= 0){
+    //     emptypiles -=1
+    //   }
+    
+    // }
+  
   }
 
   update_score(){
@@ -112,31 +198,16 @@ export class Game {
     }
     return this.score_tally
   }
-
-  assign_base_cards(){
-    this.base_cards = []    
-    for (let card of this.AllCards.base_cards){
-        this.base_cards.push(new card)
-    }  
-}
-
-  choose_actions(){
-        this.chosen_actions = new Deck()
-        
-        for (let cardClass of this.AllCards.AllActions) {
-            this.chosen_actions.cards.push(new cardClass)
-        }
-       
-        this.chosen_actions.shuffle()
-        this.chosen_actions.cards.length = this.numActionCards
-}
-
-  check_end_game(){
-    console.log("counting up all of the piles to see if game is over")
+  next_player(){
+    // console.log("about to next player", this)
+    this.player_num +=1
+    if (this.player_num == this.players.length){
+      this.player_num = 0
+    }
+    this.current_player = this.players[this.player_num]
+    // this.update_score()
+    return this.player_num
   }
-
-
-
 
 
 
@@ -145,143 +216,3 @@ export class Game {
 
 
 
-// if (!game_over){
-//   console.log("Game Over the winner is Scott")
-// }
-
-
-
-// function next_phase(){
-//   current_phase +=1
-//   if (current_phase == phase.length){
-//     current_phase = 0
-//   }
-//   return current_phase
-// }
-// let turn_counter = 0
-// function action_phase(){
-//   console.log("It's the action phase")
-//   next_phase()
-// }
-// function buy_phase(){
-//   console.log("It's the buy phase")
-//   next_phase()
-// }
-// function cleanup_phase(){
-//   console.log("It's the cleanup phase")
-//   next_phase()
-//   next_player()
-//   turn_counter += 1
-//   if (turn_counter > 4){
-//     game_over = true
-//   }
-// }
-// function update_score(){
-//   for (let player of players){
-//     player.tally_score()
-//     let list_item = (`<li>${player.name}'s score: ${player.score}</li>`)
-//     $('#score_board').append(list_item)
-//   }
-// }
-// function display_winner(){
-//   let winner = current_player;
-//   for (let player of players){
-//     if (player.score > winner.score){
-//       winner = player
-//     }
-//   }
-//   alert(`${winner.name} is the winner!`)
-// }
-
-
-
-
-
-
-
-
-
-
-// $(document).ready(function(){
-//   build_board()
-
-//   //initialize the game state
-//   if (initialize){
-//     //create new players on game start
-//     num_of_players = prompt("Please enter the number of new players:")
-//     for (let i = 0; i < num_of_players; i++){
-//       let name = prompt("Please enter the players name:")
-//       let player = new Player(name)
-//       players.push(player)
-//     }
-//     //populate the html
-//     current_player = players[player_num]
-//     $('#current_player').html(current_player.name)
-//     $('#current_phase').html(phase[current_phase])
-//     $('#deck_count').html(current_player.deck.length)
-//     $('#discard_count').html(current_player.discard.length)
-//     $('#actions').html(current_player.actions)
-//     $('#buys').html(current_player.buys)
-//     $('#coins').html(current_player.coins)
-//     update_score()
-//     current_player.draw_hand()
-//     current_player.display_hand()
-
-//   }
-//   else {
-//     //this is purely for debugging
-//     num_of_players = 4
-//     for (let i = 0; i < num_of_players; i++){
-//       let name = `player${i}`
-//       let player = new Player(name)
-//       players.push(player)
-//     }
-//     current_player = players[player_num]
-//     $('#current_player').html(current_player.name)
-//     $('#current_phase').html(phase[current_phase])
-//     $('#deck_count').html(current_player.deck.length)
-//     $('#discard_count').html(current_player.discard.length)
-//     $('#actions').html(current_player.actions)
-//     $('#buys').html(current_player.buys)
-//     $('#coins').html(current_player.coins)
-//     update_score()
-//     current_player.draw_hand()
-//     current_player.display_hand()
-//   }
-
-//   //stay in game loop until game_over is true
-// while (!game_over){
-//   action_phase()
-//   buy_phase()
-//   cleanup_phase()
-// }
-// update_score()
-// display_winner()
-
-//   //advance phase
-//   $('#next_phase').click(function(){
-//     next_phase()
-//     $('#current_phase').html(phase[current_phase])
-//   })
-
-//   //once game_over is true tally score and display winner
-
-//   // display players turn
-//   $('#current_player').click(function(){
-//     next_player()
-//     $('#current_player').html(current_player.name)
-//   });
-
-//   //count donw cards as you buy from piles
-//   let card_count = 10;
-//   let countDisplay = $('.coppers')
-//   let clickme = $('.click')
-//   clickme.click(function(){
-//     card_count -= 1;
-//     countDisplay.html(card_count)
-
-//   $('.card').click(function(){
-//     console.log($(this))
-//   });
-//   });
-// });

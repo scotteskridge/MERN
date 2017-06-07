@@ -18,7 +18,7 @@ export function DisplayCard(card) {
             <div className="click ui button " >
                 <ul className="card">
                     <li>Name: {card.Name}</li>
-                    <li>Cost: {card.Cost}</li>
+                    <li>Cost: {card.cost}</li>
                     <li>Victory Points : {card.Victory_Points}</li>
                     <li>Type: {card.Type}</li>
                     <li>Description: {card.Description}</li>

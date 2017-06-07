@@ -30,6 +30,8 @@ export default class GameState extends React.Component {
 					<li> </li>
 					<li>Current Player: {this.props.game.current_player.name} </li>
 					<li>Current Phase: {this.props.game.current_phase} </li>
+					<li>Current Turn: {this.props.game.turn} </li>
+					<li>Piles until game end: {this.props.game.num_piles_to_end} </li>
 					<li >{ score_list }</li>
 
 				</ul>

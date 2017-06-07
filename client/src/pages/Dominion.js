@@ -1,9 +1,5 @@
 import React from "react"
 import { observer, inject } from "mobx-react"
-import { DisplayCard  }  from "./dominion/componants/DisplayCard"
-import { Deck } from "./dominion/classes/DeckClass"
-import { AllCards } from "./dominion/classes/AllCards"
-import { Game } from "./dominion/classes/GameClass"
 import GameState from "./dominion/displays/GameState"
 import BaseCards from "./dominion/displays/BaseCards"
 import ActionCards from "./dominion/displays/ActionCards"
@@ -72,45 +68,25 @@ export default class Dominion extends React.Component {
 
 
 
-    //I got rid of choose actions and assign actions and combined to one.
-    //may need to break them apart again to allow for game update
-    
-// assign_action(){
-//   this.actionCards = this.choose_actions()
-//   for (var card of this.actionCards){
-//     // var test_pile = new Deck(make_card(card_list[ind]))
-//     // console.log(test_pile, test_pile.cards.length)
-//     // $('.action').append(display_pile(card))
-//   }
-
-
-
-    display_pile(card){
-  return `<div class="click " >
-            <ul class = "card">
-              <li>Name: ${card.Name}</li>
-              <li>Cost: ${card.Cost}</li>
-              <li>Victory Points : ${card.Victory_Points}</li>
-              <li>Type: ${card.Type}</li>
-              <li>Description: ${card.Description}</li>
-            </ul>
-            <span class = "counter">
-              ${card.PileCount()}
-            </span>
-          </div>`
-}
+/// pretty sure I no longer need this code at all
+//     display_pile(card){
+//   return `<div class="click " >
+//             <ul class = "card">
+//               <li>Name: ${card.Name}</li>
+//               <li>Cost: ${card.Cost}</li>
+//               <li>Victory Points : ${card.Victory_Points}</li>
+//               <li>Type: ${card.Type}</li>
+//               <li>Description: ${card.Description}</li>
+//             </ul>
+//             <span class = "counter">
+//               ${card.PileCount()}
+//             </span>
+//           </div>`
+// }
 
  change_name(event){
     this.props.store.current_game.current_player.name = event.target.value
   }
-
-
-
-
-
-
-
-
 
 //for right now the game is going to be hot seat so the Player display needs to be given
 //the active players hand and played cards... going forward it will only need the 
@@ -129,12 +105,10 @@ export default class Dominion extends React.Component {
 
                 <GameState game = {current_game}/>
                
-                <BaseCards cards = {current_game.base_cards}/>
+                <BaseCards />
                 <ActionCards cards = {store.current_game.chosen_actions.cards}/>
                 <PlayerDisplay  /> 
 
-                <input className = "current_player_name" value = {current_game.current_player.name} onChange={this.change_name.bind(this)} />
-                {current_game.current_player.name}
             </div>
         )
     }

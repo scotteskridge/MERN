@@ -20,6 +20,7 @@ Cool tech:
 
 done:
     set up express
+    manage data with props and state and context
     render project start
     install react and get a landing page
     modularize componants
@@ -45,32 +46,54 @@ done:
     fix played cards
     fix updating first players draw hand display something is breaking in the timeing
     add onclick actions
-
-
-
-rightnow:
-    there is a bug in moving cards to played... none of the stats are comeing over and it's deleting the score 
-    it looks like it has somethign to do with mobx mutating the card object into observable arrays   
+    there is a bug in moving cards to played... none of the stats are comeing over and it's deleting the score - fixed the tally score method and removed the concats that seemed to fix it --- it looks like it has somethign to do with mobx mutating the card object into observable arrays   
     add stats for player and game
-    initialize game loop
-
-    move files over to classes folder
-    
-    
-    manage data with props and state and context
-
-near term:
-    make a save game button to push to local storage
-    have new game clear saved game in local storage
-    add card on play methods
-    manage player log in 
-    figure out the difference between js and jsx
-
-midterm:
+    initialize game loop --- becasue this is turn based there doenst actually needto be a game loop, one funcion will call the next until the game end condition is met
+    Fix player feed back messages
     hot seat play
     to get persitant state looks like I'm going to need a store like flux or redux
     look at creating a object called data store and useing that instance inleu of redux
     or use local storage
+    move all phase change logic over to the gameobject
+    move files over to classes folder
+    only allow cards to be played from hand not from anywhere
+    fixed - can play cards out of any area not just hand
+
+rightnow:
+    debug end game logic not ending on time
+    debug button text not updating properly
+    double check reseting phase and messages and button text
+    implement onPlay effects for all cards
+    show empty pile on screen
+    
+
+    
+    
+    
+    
+
+near term:
+    add somemore cards - pick 10 more fun one
+    allow cards to remain in play area and not be discarded if they are persistant
+    learn how yeild and generators work
+    make a save game button to push to local storage
+    have new game clear saved game in local storage
+    
+    manage player log in 
+    figure out the difference between js and jsx
+
+bugs:
+    
+    canceling out of the new game popup breaks things
+    no validations on new game popup
+
+
+midterm:
+    validate that game is over and force restart
+    add art to cards
+    reformat screen layout and add some styleing
+    animate card moving from hand to play and draw to play
+    have a game log display as part of gamestats
 
 
 
@@ -81,12 +104,13 @@ long term :
     save game state (maybe to database?)
     will want sockets.io
     get npm start to run a better .bat file with mongo and rebuild
-    ensure that babel is working???
+    ensure that babel is working
     incorporate offside-jsy
     figure out .js vs .jsx
     learn lodash
     use object.assign({}, foo) to get around passing objects by refrerence
-
+    have a start game screen to asign players and ai
+    have some ai (just start with random)
 
 For fun:
     add mouse hover or right click inspect of cards
@@ -96,7 +120,7 @@ For fun:
 Notes:
     right now to use @ decorators (which is most mobx tutts) you need to add the transform-decorators-legacy
     yourself in node_modules/react-scripts/config/babel.dev.js, as I don't want to go tinkering around with
-    the out of the box code just yet just use the observer functions instead of the decorators
+    the out of the box code just yet just use the observer functions instead of the decorators --- I fixed this problem with npm react-rewire
     
 
     

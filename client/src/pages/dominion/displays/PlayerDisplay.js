@@ -1,32 +1,39 @@
 import React from "react"
 import { observer, inject } from "mobx-react"
-import  PlayerState from "./PlayerState"
+import  PlayerStats from "./PlayerStats"
 import  PlayedCards from "./PlayedCards"
 import  PlayerHand from "./PlayerHand"
 
 @inject("store") @observer
 export default class PlayerDisplay extends React.Component {
+    
 
-    end_turn(){
-        //this is everything that should happen during cleanup
-        //current player discards everything
-        //update score
-        //check for end game condition ie emptypiles
-        //start next players turn
-
-        this.props.store.current_game.current_player.end_turn()
-        this.props.store.current_game.update_score()
-        this.props.store.current_game.check_end_game()
-        this.props.store.current_game.next_player()
+    //ideally I'd like this button to have several states and change it's text based on the state
+    //really the button just needs to show pass and end turn do i need state for the button text?
+    next_phase(){
+        //moving all logic to gameclass side
+       const { current_game } = this.props.store
+        //// END ACTION PHASE //// 
+       if(current_game.current_phase == "Action"){
+        current_game.end_action()
+            return 
+         //// END BUY PHASE ////
+        } else if(current_game.current_phase == "Buy"){
+            current_game.end_buy()
+        }
     }
     render(){
         const { current_player } = this.props.store.current_game
         const play_card = (card) => {current_player.play_card(card)}
         return (
             <div>
-                <button className="ui button" onClick={this.end_turn.bind(this)}>End Turn </button>
-                <PlayerState player = {current_player} />
+                <p>{current_player.feedback}</p>
+                <button className="ui button" onClick={this.next_phase.bind(this)}>{current_player.button_text} </button>
+
+                <PlayerStats player = {current_player} />
+                <h3>Played Cards</h3>
                 <PlayedCards played = {current_player.played}/>
+                <h3>{current_player.name}'s Hand</h3>
                 <PlayerHand hand= {current_player.hand} />
             </div>
         )

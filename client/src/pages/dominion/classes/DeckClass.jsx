@@ -36,10 +36,12 @@ export class Deck {
       this.cards[i] = temp
     }
   }
-  @action add_to(card){ this.cards.push(card)}
+  @action add_to(card){ 
+    this.cards.push(card)
+  }
 
   draw(card = undefined){
-    if(card == undefined){
+    if(card === undefined){
       return this.cards.pop()
     }
     let index = this.cards.indexOf(card)
@@ -55,7 +57,8 @@ export class Deck {
     return this.cards.splice(index,1)
   }
 
-
+  //as much as I like my show method I just realized that it's whats allowing the plaed cards to have a play_card method
+  //I'm going to move this back to the displays for now
   show =() =>{
     if(!this.cards) {return undefined}
     return this.cards.map((card , index) => {
@@ -64,5 +67,14 @@ export class Deck {
         {DisplayCard(card)} 
       </div>)
     }) 
+  }
+
+  //I wonder if I can turn this into a generator or yeil a value?
+  tally(){
+    let score = 0
+    for(let card of this.cards){
+      if(card.Victory_Points){ score += card.Victory_Points}
+    }
+    return score
   }
 }
