@@ -482,7 +482,10 @@ export class Witch extends Card{
         //I can either do a loop to look for it or I can save it on construction
         //it;s late im tired I'll figure it out tomorrow
         let curseDeck = {}
-        for(let deck of store.current_game.base_cards)
+        for(let deck of store.current_game.base_cards){
+          // doo stuff
+          return null
+        }
         console.log(other_player)
       }
     }
