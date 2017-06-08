@@ -30,6 +30,7 @@ class Store {
     //not sure how the RegExp class works but useing the magic for now.. .the i makes it case insensative
     constructor(){
       this.current_game = new Game()
+      console.log("store at construction",this.current_game)
     }
     @computed get filtered_todos() {
       let matched_filter = new RegExp(this.filter_string, "i")
@@ -48,11 +49,13 @@ class Store {
     }
     save_game = (game) =>{
       this.current_game = game
+      console.log("store at save_game",this.current_game)
     }
     //not sure what @action does but doents seem to have an effect
     //however I must use the = () => {/.../} to bind to this or nothign happen and I dont know why
     @action new_game = () =>{
       this.current_game = new Game()
+      console.log("store at new_game",this.current_game)
       this.current_game.start_new_game()
     }
     game_status(){

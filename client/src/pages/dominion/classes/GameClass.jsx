@@ -7,9 +7,9 @@
 
 //I think i'm going to move all of the things to do with making a new game into here
 import { Player } from "./PlayerClass"
-import { AllCards } from "./AllCards.js"
+import { AllCards, Card, Curse } from "./AllCards.js"
 import { Deck } from "./DeckClass"
-import { Card } from "./AllCards"
+import  store from "../../../store"
 import { autorun, observable, computed, action } from "mobx"
 
 //i need a way to tie cards to piles and piles need a pile count... does this actually need
@@ -53,6 +53,7 @@ export class Game {
     this.numActionCards = 10 //this may change based on number of players
     this.AllCards = new AllCards
     this.base_cards = [] //needs to be an array of decks
+    this.curses = []
     this.action_cards = []
     this.chosen_actions = [] //needs to be an array of decks
     this.trash = new Deck(null, "trash")
@@ -102,6 +103,7 @@ export class Game {
   start_new_game(){
     // console.log("starting a new game")
     // this.allCards = new AllCards
+    store.save_game(this)
     this.setupPlayers() 
     this.initGame() //needs to be before choose_actions to get the right num of piles
     
@@ -125,7 +127,7 @@ export class Game {
     if(this.num_of_players !=0){
       for (let i = 0; i < this.num_of_players; i++){
         let name = prompt("Please enter the players name:")
-        let player = new Player(name)
+        let player = new Player(name, this) //should look into deconstruction again
         player.draw_hand()
         this.players.push(player)    
       }
@@ -149,17 +151,17 @@ export class Game {
     // could do some funny business with makeing the cards location be "pile"
     // and makeing the curr_location
     for (let card of this.AllCards.BaseCards){
-      let pile = new Deck(card, "store")
-      // for(let i=0; i < thiscard.pile_count; i++){
-      //   // let aCard = new card
-      //   // aCard.curr_location = pile
-      //   pile.add_to(new card)
-        
-      // }
-      this.base_cards.push(pile)
+    let pile = new Deck(card, "store")
+    this.base_cards.push(pile)
+    //save the deck that has curses so I don't have to go look it up later 
+      if(card == Curse){
+        this.curses = pile
+      }
     }
-    // console.log("turning base cards into an array of piles",this.base_cards)  
+     console.log("store at construction",store)
   }
+    // console.log("turning base cards into an array of piles",this.base_cards)  
+  
   choose_actions(){
     this.chosen_actions = new Deck()
     for (let cardClass of this.AllCards.AllActions) {

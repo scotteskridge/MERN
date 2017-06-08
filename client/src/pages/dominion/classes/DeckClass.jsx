@@ -1,5 +1,5 @@
 import  React from "react"
-import { Copper, Estate, Militia, Card } from "./AllCards.js"
+import { Copper, Estate, Throneroom, Smithy, Card } from "./AllCards.js"
 import { observable, computed, action } from "mobx"
 import { DisplayCard } from "../componants/DisplayCard"
 import store from "../../../store"
@@ -27,13 +27,12 @@ export class Deck {
   @observable deck_type = ""
   
   constructor(card , deck_type ){
+    // console.log("store at construction",store)
     this.cards = []
     if (card){
-      let cardtype = new card
-      // console.log("is my deck getting a card?", cardtype)
-      for (let i = 0; i < cardtype.pile_count; i++){
-        this.add_to(new card(i))
-        // console.log("is i incrementing?",this, i)
+      let aCard = new card
+      for(let i=0; i <aCard.pile_count; i++){
+        this.add_to(new card(store.current_game))
       }
     }
     this.deck_type = deck_type
@@ -43,11 +42,12 @@ export class Deck {
     return this.cards.length
   } 
   @action starter_deck(){
+    if(!store){return null}
     for (let i = 0; i < 7; i ++){
-      this.add_to(new Militia())
+      this.add_to(new Throneroom(store.current_game))
     }
     for (let i = 0; i < 3; i ++){
-      this.add_to(new Estate())
+      this.add_to(new Smithy(store.current_game))
     }
   }
 

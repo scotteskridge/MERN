@@ -1,5 +1,5 @@
 import { Deck } from "./DeckClass"
-import store from "../../../store"
+// import store from "../../../store"
 import { autorun, observable, computed, action } from "mobx"
 
 export class Player {
@@ -21,8 +21,9 @@ export class Player {
   @observable button_text = {}
 
    
-
-  constructor(name) {
+//consider making the a game pointer that refrences the game the player is in... then i don;t need
+//to type game and I don't need to inport store... may just ask shane about this 
+  constructor(name, game) {
     this.name = name
     this.actions = 1
     this.buys = 1
@@ -47,9 +48,12 @@ export class Player {
       Resolve : "Pass",
       Playing : "Pass"
     }
+    this.game = game
     // console.log(this)
     // this.draw_hand()
   }
+
+  ////////////////// INIT METHODS ////////////////////
 
   @action tally_score(){
     //was doing this by concating all decks into a master all cards and then
@@ -158,7 +162,7 @@ export class Player {
   
   trash_card(card){
     card.curr_location.remove(card)
-    store.current_game.trash.add_to(card)  
+    this.game.trash.add_to(card)  
   }
   show_card(card){
     // console.log("Player is showing a card:", card)
@@ -169,6 +173,14 @@ export class Player {
     this.hand.remove(card)
     this.played.add_to(card)
     this.update_stats(card)
+  }
+  trigger_effect(card){
+    this.update_stats(card)
+    card.OnPlay(this)
+  }
+  gain_curse(){
+    let card = this.game.curses.draw()
+    this.discard.add_to(card)
   }
 
   play_treasures(){

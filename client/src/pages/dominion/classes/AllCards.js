@@ -3,10 +3,10 @@ import { autorun, action } from "mobx-react"
 import  store  from "../../../store"
 
 
-
+//I could do the same thing here that i did with player
 export class Card{
   @observable curr_location = ""
-  constructor(id){
+  constructor(game){
 
    this.cost = 0;
    this.Victory_Povars = 0;
@@ -21,9 +21,9 @@ export class Card{
    // deck, hand, played, discard, pile, trash
    // this may end up as an object litteral to map back to this.player.hand
    //not sure I need both of these may only need one or the other
-   this.locations ={"deck" : null, "hand" : null, "played" : null, "discard" : null, "pile" : "im in a pile", "trash": null} 
+  //  this.locations ={"deck" : null, "hand" : null, "played" : null, "discard" : null, "pile" : "im in a pile", "trash": null} 
    this.curr_location = "pile"
-   this.id = id
+   this.game = game
   }
   OnPlay(player){
     //this would be a great place to add to current_game.log when I make one
@@ -56,13 +56,13 @@ export class AllCards{
                 Moneylender, Smithy, Throneroom, Festival,
                 Laboratory] 
     this.BaseCards = [Copper, Silver, Gold, Estate, Duchy, Province, Curse]
-    // console.log("from thr all cards constructor idbase cards is", this.BaseCards)
+    // console.log("from thr all cards constructor gamebase cards is", this.BaseCards)
   }
 } 
 
 export class Copper extends Card {
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 1;
     this.Victory_Points = 0;
     this.type = "Treasure";
@@ -81,8 +81,8 @@ export class Copper extends Card {
 }
 
 export class Silver extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 3;
     this.Victory_Points = 0;
     this.type = "Treasure";
@@ -100,8 +100,8 @@ export class Silver extends Card{
 }
 
 export class Gold extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 6;
     this.Victory_Points = 0;
     this.type = "Treasure";
@@ -119,8 +119,8 @@ export class Gold extends Card{
 }
 
 export class Estate extends Card {
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 2;
     this.Victory_Points = 1;
     this.type = "Victory";
@@ -138,8 +138,8 @@ export class Estate extends Card {
 }
 
 export class Duchy extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 3;
     this.type = "Victory";
@@ -157,8 +157,8 @@ export class Duchy extends Card{
 }
 
 export class Province extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 8;
     this.Victory_Points = 6;
     this.type = "Victory";
@@ -175,8 +175,8 @@ export class Province extends Card{
   }
 }
 export class Curse extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 0;
     this.Victory_Points = -1;
     this.type = "Victory";
@@ -194,8 +194,8 @@ export class Curse extends Card{
 }
 
 export class Village extends Card {
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 3;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -213,8 +213,8 @@ export class Village extends Card {
 }
 
 export class Cellar extends Card {
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 2;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -229,16 +229,16 @@ export class Cellar extends Card {
   }
   OnPlay(player){
     console.log(player)
-    store.current_game.current_phase = "Cellar"
+    this.game.current_phase = "Cellar"
     player.message.Playing = "Choose a card to discard or pass"
-    store.current_game.current_phase = "Playing"
-    store.current_game.events["Playing"] = (card) => {
+    this.game.current_phase = "Playing"
+    this.game.events["Playing"] = (card) => {
       if(card.curr_location.deck_type !== "hand") {
         return this.current_player.message.Cellar = "please select a card from your hand to discard"
       }
       player.discard_card(card)
       this.redraws++
-      store.current_game.card_to_resolve = this
+      this.game.card_to_resolve = this
     }
    
 
@@ -254,8 +254,8 @@ export class Cellar extends Card {
 
 
 export class Chapel extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 2;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -270,18 +270,18 @@ export class Chapel extends Card{
   }
   OnPlay(player){
     // console.log(player)
-    //would probably be a good idea to push these into an array and on clicking confirm
+    //would probably be a good gameea to push these into an array and on clicking confirm
     //go through the array and trash all of them but one problem at a time
     this.trash = 4 // this resets it on play ... it does mean that the trashes available are wring while its in my discard
     player.message.Playing = "Choose up to four cards to trash or pass"
-    store.current_game.current_phase = "Playing"
-    store.current_game.events["Playing"] = (card) => {
+    this.game.current_phase = "Playing"
+    this.game.events["Playing"] = (card) => {
       if(card.curr_location.deck_type !== "hand") {return this.current_player.Playing = "please select a card from your hand to trash"}
       player.trash_card(card)
       this.trash--
       
       if(this.trash <=0){
-        store.current_game.current_phase = "Action"
+        this.game.current_phase = "Action"
         this.trash = 4
         return
       }
@@ -305,8 +305,8 @@ export class Chapel extends Card{
   
 }
 export class Moat extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 2;
     this.Victory_Points = 0;
     this.type = "Reaction Action";
@@ -329,8 +329,8 @@ export class Moat extends Card{
 }
 
 export class Chancellor extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 3;
     this.Victory_Points = 0;
     this.type = "Reaction Action";
@@ -351,8 +351,8 @@ export class Chancellor extends Card{
   }
 }
 export class Woodcutter extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 3;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -368,14 +368,14 @@ export class Woodcutter extends Card{
     super.OnPlay(player)
     
     console.log(player.message.Action)
-    console.log(store.current_game.current_player.message.Action)
+    console.log(this.game.current_player.message.Action)
   
   }
 }
 
 export class Workshop extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -389,20 +389,20 @@ export class Workshop extends Card{
     }
   OnPlay(player){
     player.message.Playing = "Gain a card costing up to 4 coins"
-    store.current_game.current_phase = "Playing"
-    store.current_game.events["Playing"] = (card) => {
+    this.game.current_phase = "Playing"
+    this.game.events["Playing"] = (card) => {
       if(card.curr_location.deck_type !== "store") {return player.message.Playing = "please select a card to gain"}
       if(card.cost > 4) {return player.message.Playing = "Card must cost 4 or less"}
       card.curr_location.draw(card)
       player.played.add_to(card)
-      store.current_game.current_phase = "Action"
+      this.game.current_phase = "Action"
       return
     }
   }
 }
 export class Feast extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -416,23 +416,23 @@ export class Feast extends Card{
     }
   OnPlay(player){
     player.message.Playing = "Gain a card costing up to 5 coins"
-    store.current_game.current_phase = "Playing"
-    store.current_game.events["Playing"] = (card) => {
+    this.game.current_phase = "Playing"
+    this.game.events["Playing"] = (card) => {
       if(card.curr_location.deck_type !== "store") {return player.message.Playing = "please select a card to gain"}
       if(card.cost > 5) {return player.message.Playing = "Card must cost 5 or less"}
       card.curr_location.draw(card)
       player.played.add_to(card)
       player.trash_card(this)
-      // console.log(store.current_game.trash)
-      store.current_game.current_phase = "Action"
+      // console.log(this.game.trash)
+      this.game.current_phase = "Action"
       return
     }
   }
 }
 
 export class Militia extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 4;
     this.Victory_Points = 0;
     this.type = "Attack Action";
@@ -448,7 +448,7 @@ export class Militia extends Card{
     super.OnPlay(player)
     //right now I'm just going to discard from 0th index
     //once sockets are in this needs to be a prompt
-    for(let other_player of store.current_game.players){
+    for(let other_player of this.game.players){
       if (other_player!= player){
         for(let card of other_player.hand.cards)
         while(other_player.hand.count > 3){
@@ -460,8 +460,8 @@ export class Militia extends Card{
   }
 }
 export class Witch extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Attack Action";
@@ -475,18 +475,9 @@ export class Witch extends Card{
   }
   OnPlay(player){
     super.OnPlay(player)
-    for(let other_player of store.current_game.players){
+    for(let other_player of this.game.players){
       if (other_player!= player){
-        //do stuff to gain a curse
-        //this one is tricky becuase i don't know where the curse pile is
-        //I can either do a loop to look for it or I can save it on construction
-        //it;s late im tired I'll figure it out tomorrow
-        let curseDeck = {}
-        for(let deck of store.current_game.base_cards){
-          // doo stuff
-          return null
-        }
-        console.log(other_player)
+        player.gain_curse()
       }
     }
   }
@@ -494,8 +485,8 @@ export class Witch extends Card{
 
 
 export class Moneylender extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 4;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -508,21 +499,21 @@ export class Moneylender extends Card{
     this.Description = `The ${this.name} let's you trash a copper to gain +3 coins`;
   }
   OnPlay(player){
-    console.log(player)
-      // base.OnPlay(player);
-      // System.Console.WriteLine("Choose a copper from your hand");
-      // // need validations in case of null card
-      // // need validations for only coppers
-      // // need validation to allow for passing
-      // Card card = Program.ActivePlayer.ChooseCard();
-      // player.Trash(card);
-      // Program.ActivePlayer.coins += 3;
+    player.message.Playing = "Trash a copper to gain 3 coins"
+    this.game.current_phase = "Playing"
+    this.game.events["Playing"] = (card) => {
+      if(card.curr_location.deck_type !== "hand" || card.name !== "Copper") {return player.message.Playing = "please select a copper to trash"}
+      player.trash_card(card)
+      player.coins +=3
+      this.game.current_phase = "Action"
+      return
+    }
   }
 }
 
 export class Smithy extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 4;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -540,8 +531,8 @@ export class Smithy extends Card{
 }
 
 export class Throneroom extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 4;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -550,22 +541,27 @@ export class Throneroom extends Card{
     this.buys = 0;
     this.pile_count = 10; 
     this.coins = 0;
-    this.Draws = 3;
+    this.Draws = 0;
     this.Description = `The ${this.name} let's you play an action twice`;
   }
   OnPlay(player){
-    console.log(player)
-      // base.OnPlay(player);
-      // System.Console.WriteLine("Choose an action to play twice");
-      // Card card = Program.ActivePlayer.ChooseCard();
-      // Program.ActivePlayer.Play_card(card, player);
-      // Program.ActivePlayer.Trigger_card(card, player);
+    //man I keep seeing this pattern over and over I with there was some wya to make this more generic so i didn't have to keep redoing this logic
+    player.message.Playing = "Choose an action to play twice"
+    this.game.current_phase = "Playing"
+    this.game.events["Playing"] = (card) => {
+      if(card.curr_location.deck_type !== "hand" || !card.type.includes("Action")) {return player.message.Playing = "please select an Action from your hand"}
+      player.put_in_play(card)
+      card.OnPlay(player)
+      player.trigger_effect(card)
+      this.game.current_phase = "Action"
+      return
+    }
   }
 }
 
 export class Festival extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -583,8 +579,8 @@ export class Festival extends Card{
 }
 
 export class Laboratory extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -601,8 +597,8 @@ export class Laboratory extends Card{
   }
 }
 export class Laboratory4 extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -620,8 +616,8 @@ export class Laboratory4 extends Card{
 }
 
 export class Laboratory2 extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
@@ -639,8 +635,8 @@ export class Laboratory2 extends Card{
 }
 
 export class Laboratory3 extends Card{
-  constructor(id){
-    super(id)
+  constructor(game){
+    super(game)
     this.cost = 5;
     this.Victory_Points = 0;
     this.type = "Action";
