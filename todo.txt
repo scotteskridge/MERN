@@ -58,15 +58,19 @@ done:
     move files over to classes folder
     only allow cards to be played from hand not from anywhere
     fixed - can play cards out of any area not just hand
-
-rightnow:
-    debug end game logic not ending on time
+        debug end game logic not ending on time
     debug button text not updating properly
     double check reseting phase and messages and button text
+    add onClick handler object
+    incapsulate methods into the card logic passed through handler
+
+rightnow:
+
     implement onPlay effects for all cards
     show empty pile on screen
-    
-
+    hmmm I just realized that cards like the witch might be tricky
+    make button text dynamic based on phase in the same way that message text is
+    figure out how to make your decks extend arrays so you can stop calling deck.cards
     
     
     

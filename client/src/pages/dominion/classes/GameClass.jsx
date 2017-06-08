@@ -9,6 +9,7 @@
 import { Player } from "./PlayerClass"
 import { AllCards } from "./AllCards.js"
 import { Deck } from "./DeckClass"
+import { Card } from "./AllCards"
 import { autorun, observable, computed, action } from "mobx"
 
 //i need a way to tie cards to piles and piles need a pile count... does this actually need
@@ -27,12 +28,15 @@ export class Game {
   @observable player_num = 0
   @observable current_player = new Player
   @observable turn = 0 //may want this for a time machine
-  @observable phase = ["Action" , "Buy" , "Cleanup"]
   @observable current_phase = ""
+  @observable phase = ["Action", "Buy", "Cleanup"]
   @observable numActionCards = 10 //this may change based on number of players
   // @observable AllCards = new AllCards
-  @observable base_cards = new Deck 
+  @observable base_cards = new Deck() 
   @observable chosen_actions = new Deck()
+  @observable events
+  @observable card_to_resolve
+
 
   constructor(){
     this.game_over = false
@@ -44,17 +48,54 @@ export class Game {
     this.player_num = 0
     this.current_player = new Player
     this.turn = 0 //mayt wan this for a time machine
-    this.phase = ["Action" , "Buy" , "Cleanup"]
     this.current_phase = ""
+    this.phase = ["Action", "Buy", "Cleanup"]
     this.numActionCards = 10 //this may change based on number of players
     this.AllCards = new AllCards
     this.base_cards = [] //needs to be an array of decks
     this.action_cards = []
     this.chosen_actions = [] //needs to be an array of decks
+    this.trash = new Deck(null, "trash")
+    this.card_to_resolve = {}
+    this.events = {
+      "Action" : (card) =>{
+         if(card.curr_location.deck_type !== "hand") {return this.current_player.message.Action = "please select a card from your hand"}
+        this.current_player.play_card(card)
+      },
+      "Buy" : (card) => {
+        if(card.curr_location.deck_type !== "store") {return this.current_player.message.Buy = "please select a card from the store"}
+        this.current_player.buy_card(card)
+      },
+      //this one needs to get moved to "Resolve and shove everything under the cellar"
+      "Show" : (card) => {
+        this.current_player.show_card(card)
+      },
+      "Playing" : (card) => {console.log("Handler resolve hasn't been overwritten")},
+      "Resolve" : (card) => {console.log("Handler resolve hasn't been overwritten")},
+      
+    }
 
-    // console.log("created a new game object")
-    // console.log(this.allCards)
-    // this.start_new_game()
+  }
+    @action card_action_handler(card){
+    return (this.events[this.current_phase])(card)
+    // 
+    //i need to set this up to either only accept decks or cards i think,
+    //when playing from hand I'm clicking on cards
+    //when buying a card i'm clicking on decks
+    //does it matter? if this think is only routing the input to 
+    //some mapped output the type of the input can change right?
+    //buy - deck
+    //play - card
+    //trash - card
+    //discard - card
+    //show - card
+    //ok so really the problem is that buying is buying a card but is affecting the count of the deck
+    //alright this jusy needs to pass around cards and I'll fix the buy method to accpet cards
+    //I think cards are goingto need to validate their own location so that I can check if it's ok to buy them or play them
+     
+
+    // return this.action_phase_map[this.current_phase](card)
+    
   }
 
 //////////////// INIT METHODS ///////////////////////////
@@ -66,6 +107,7 @@ export class Game {
     
     this.assign_base_cards()
     this.choose_actions()
+    console.log(this)
     // this.save_game(this.game)
             
 }
@@ -104,12 +146,16 @@ export class Game {
   assign_base_cards(){
     // this.base_cards = [] 
     // this.AllCards = new AllCards
+    // could do some funny business with makeing the cards location be "pile"
+    // and makeing the curr_location
     for (let card of this.AllCards.BaseCards){
-      let thiscard = new card
-      let pile = new Deck
-      for(let i=0; i < thiscard.pile_count; i++){
-        pile.add_to(new card)
-      }
+      let pile = new Deck(card, "store")
+      // for(let i=0; i < thiscard.pile_count; i++){
+      //   // let aCard = new card
+      //   // aCard.curr_location = pile
+      //   pile.add_to(new card)
+        
+      // }
       this.base_cards.push(pile)
     }
     // console.log("turning base cards into an array of piles",this.base_cards)  
@@ -123,28 +169,29 @@ export class Game {
     this.chosen_actions.cards.length = this.numActionCards
     // console.log("from choose actions the chosen_actions are", this.chosen_actions)
     for (let card of this.chosen_actions.cards){
-      let thiscard = new card
-      let pile = new Deck
-      for(let i=0; i < thiscard.pile_count; i++){
-        pile.add_to(new card)
-      }
+      // let thiscard = new card
+      let pile = new Deck(card, "store")
+      // for(let i=0; i < thiscard.pile_count; i++){
+      //   pile.add_to(new card)
+      // }
       this.action_cards.push(pile)
       // console.log("from choose actions the action_cards are", this.action_cards)
     }
   }
 
+
   
   //////////////// ACTION PHASE METHODS ///////////////////////////
+
   @action end_action(){
     this.current_player.play_treasures()
-    this.current_player.button_text="End Turn"
-    this.current_player.feedback = "Select a card to buy"
+    // this.current_player.message = "Select a card to buy"
     this.current_phase = "Buy"
   }
   //////////////// BUY PHASE METHODS ///////////////////////////
   @action end_buy(){
     //Change feeback to be ready for next turn
-    this.current_player.feedback = "Select a card to play" 
+    // this.current_player.message = "Select a card to play" 
     this.current_phase = "Cleanup"
     this.current_player.end_turn()
     this.cleanup()
@@ -213,6 +260,8 @@ export class Game {
 
 
 } // end of game class
+
+
 
 
 

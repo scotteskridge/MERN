@@ -17,6 +17,14 @@ export default class BaseCards extends React.Component {
         // console.log("Base cards has this props.cards", this.props.cards )
 
     }
+    handleClick(deck){
+        console.log("you clicked", deck.cards[0])
+        console.log("the cards location is", deck.cards[0].curr_location.deck_type)
+    if(deck.count > 0){
+        //this should only return true if the buy was succesful
+        this.props.store.current_game.card_action_handler(deck.cards[0])
+    }
+}
 
     // return <div key ={index}>{DisplayCard(pile.cards[0])}</div>;
 
@@ -25,7 +33,7 @@ export default class BaseCards extends React.Component {
         let cards_list = base_cards.map((deck , index) =>{
             if(deck.count <=0) {return null}
             // console.log("deck from basecards map",deck, index)
-             return <div key ={index} onClick={() => this.props.store.current_game.current_player.buy_card(deck)}>
+             return <div key ={index} onClick={() => this.handleClick(deck)}>
             {DisplayCard(deck.cards[0])}
             <p>{deck.count}</p>
             </div>;

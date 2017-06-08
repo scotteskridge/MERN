@@ -9,11 +9,18 @@ export class Player {
   @observable coins = 0
   @observable score = 0
   @observable handSize = 5
-  @observable deck = new Deck
-  @observable hand = new Deck
-  @observable played = new Deck
-  @observable feedback = "Select a card to play"
-  @observable button_text = "Go to buy phase"
+  @observable deck = new Deck()
+  @observable hand = new Deck()
+  @observable played = new Deck()
+  @observable discard = new Deck()
+  @observable message = {
+      Action : "Please select a card to play or pass",
+      Buy : "Please select a card to buy or pass",
+      Playing : "While Playing card Message if you see me fix me"
+    }
+  @observable button_text = {}
+
+   
 
   constructor(name) {
     this.name = name
@@ -22,13 +29,24 @@ export class Player {
     this.coins = 0
     this.score = 0
     this.handSize = 5
-    this.deck = new Deck //this deck name is a poorly descriptive should this be draw_deck?
-    this.hand = new Deck
-    this.played = new Deck
-    this.discard = new Deck
-    this.feedback = "Select a card to play"
+    this.deck = new Deck(null, "deck") //this deck name is a poorly descriptive should this be draw_deck?
+    this.hand = new Deck(null, "hand")
+    this.played = new Deck(null, "played")
+    this.discard = new Deck(null, "discard")
     this.deck.starter_deck()
     this.deck.shuffle()
+    this.redraws = 0
+    this.message = {
+      Action : "Please select a card to play or pass",
+      Buy : "Please select a card to buy or pass",
+      Playing : "While Playing card Message if you see me fix me"
+    }
+    this.button_text = {
+      Action : "Proceed to Buy",
+      Buy : "End Turn",
+      Resolve : "Pass",
+      Playing : "Pass"
+    }
     // console.log(this)
     // this.draw_hand()
   }
@@ -91,46 +109,61 @@ export class Player {
 
     //concider triggering the next phase as soon as actions hits 0
     if(this.actions <=0){
-      this.feedback = "You're out of actions"
+      this.message.Action = "You're out of actions"
       return null
     }
     if(!card.type.includes("Action")){
-      this.feedback =`Please select an action not a ${card.type}`
+      this.message.Action =`Please select an action not a ${card.type}`
       return null
     }
 
-    if(this.actions <=0) {
-      this.feedback ="no more actions"
-      return null
-    }
     this.actions -= 1
     this.put_in_play(card)
+    this.message.Action = "Please select a card to play or pass"
     card.OnPlay(this)
   }
 
-  buy_card(deck){
+  @action buy_card=(card)=>{
+    console.log(this.name, "is trying to buy", card)
+    console.log("the cards location is", card.curr_location.deck_type)
     //concider triggering the next phase as soon as buys hits 0
     if(this.buys <=0){
-      this.feedback = "You're out of buys"
-      return null
+      this.message.Buy = "You're out of buys"
+      return false
     }
-    if(deck.cards[0].cost > this.coins){
-      this.feedback = "Not enough coins, select a cheaper cards"
-      return null
+    if(card.cost > this.coins){
+      this.message.Buy = "Not enough coins, select a cheaper cards"
+      return false
     }
-    // console.log(this.name, "is trying to buy", deck)
-    let card = deck.draw()
+    card.curr_location.remove(card)
+    console.log("the cards location is", card.curr_location.deck_type)
     this.played.add_to(card)
+    console.log("the cards location is", card.curr_location.deck_type)
     this.coins -= card.cost
     this.buys -= 1
+    this.message.Buy = "Please select a card to buy or pass"
+    return true
     //could throw in some logic here to adjust empty piles count if deck.count ==0
     //but I'd need to import game
-    if(deck.count <= 0){
-      store.current_game.num_piles_to_end -= 1
-    }
-
-
   }
+  discard_card(card = undefined){
+    if(card == undefined){
+      card = this.hand.discard()
+      return this.discard.add_to(card)
+    }
+    //the add_to is affecting the location order matters
+    card.curr_location.remove(card)  
+    this.discard.add_to(card)
+  }
+  
+  trash_card(card){
+    card.curr_location.remove(card)
+    store.current_game.trash.add_to(card)  
+  }
+  show_card(card){
+    // console.log("Player is showing a card:", card)
+  }
+  
   //pulled this part out to skip validations notice on play effects dont trigger either
   put_in_play(card){
     this.hand.remove(card)
@@ -162,13 +195,11 @@ export class Player {
 
     while(this.hand.count > 0){ 
       //will need to have some logic in here to check for cards that should remain in play
-      this.discard.add_to(this.hand.cards[0])
-      this.hand.remove(this.hand.cards[0])    
+      this.discard_card(this.hand.cards[0]) 
     }
     while(this.played.count > 0){
       //will need to have some logic in here to check for cards that should remain in pla
-      this.discard.add_to(this.played.cards[0])
-      this.played.remove(this.played.cards[0])
+      this.discard_card(this.played.cards[0]) 
       // this.discard.add_to(this.played.draw()) //this breaks in strange ways
     }
     this.reset_stats()

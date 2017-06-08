@@ -1,19 +1,42 @@
 import  React from "react"
-import { Copper, Estate } from "./AllCards.js"
+import { Copper, Estate, Militia, Card } from "./AllCards.js"
 import { observable, computed, action } from "mobx"
 import { DisplayCard } from "../componants/DisplayCard"
 import store from "../../../store"
 
+
+//I think that all of my deck classes should extend array so that I dont have to keep calling
+//deck.cards but I'm not realy sure how to make that work and it would break alot of code :)
+// class MyArray extends Array {
+//   anatribute = "look at me"
+//   somecards = [new Card]
+
+//   // Overwrite species to the parent Array constructor
+//   static get [Symbol.species]() { return Array; }
+// }
+
+// var a = new MyArray(1,2,3);
+// var mapped = a.map(x => x * x);
+
+// console.log(a); // false
+// console.log(mapped instanceof Array);   // true
+
+
 export class Deck {
   @observable cards = []
+  @observable deck_type = ""
   
-  constructor(card){
+  constructor(card , deck_type ){
     this.cards = []
     if (card){
-      for (let i = 0; i < card.PileCount(); i++){
-        this.cards.push(card)
+      let cardtype = new card
+      // console.log("is my deck getting a card?", cardtype)
+      for (let i = 0; i < cardtype.pile_count; i++){
+        this.add_to(new card(i))
+        // console.log("is i incrementing?",this, i)
       }
     }
+    this.deck_type = deck_type
   
   }
   @computed get count(){
@@ -21,10 +44,10 @@ export class Deck {
   } 
   @action starter_deck(){
     for (let i = 0; i < 7; i ++){
-      this.cards.push(new Copper())
+      this.add_to(new Militia())
     }
     for (let i = 0; i < 3; i ++){
-      this.cards.push(new Estate())
+      this.add_to(new Estate())
     }
   }
 
@@ -36,8 +59,10 @@ export class Deck {
       this.cards[i] = temp
     }
   }
-  @action add_to(card){ 
+  @action add_to =(card)=>{ 
     this.cards.push(card)
+    card.curr_location = this
+    // console.log(card)
   }
 
   draw(card = undefined){
@@ -59,15 +84,7 @@ export class Deck {
 
   //as much as I like my show method I just realized that it's whats allowing the plaed cards to have a play_card method
   //I'm going to move this back to the displays for now
-  show =() =>{
-    if(!this.cards) {return undefined}
-    return this.cards.map((card , index) => {
-      // console.log("deck thinks current player is", store.current_game.current_player)
-      return (<div key ={index} onClick={() => store.current_game.current_player.play_card(card)}>
-        {DisplayCard(card)} 
-      </div>)
-    }) 
-  }
+  
 
   //I wonder if I can turn this into a generator or yeil a value?
   tally(){
@@ -78,3 +95,10 @@ export class Deck {
     return score
   }
 }
+
+// let mydeck = new Deck(null, "mine")
+// console.log(mydeck)
+
+// if (typeof require != 'undefined' && require.main==module) {
+//     fnName();
+// }

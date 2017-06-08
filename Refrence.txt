@@ -57,3 +57,5 @@ or this
 }
 https://www.w3schools.com/jsref/event_button.asp
 https://www.sitepoint.com/building-custom-right-click-context-menu-javascript/
+
+design patterns - https://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612
