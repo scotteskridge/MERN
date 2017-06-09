@@ -63,10 +63,59 @@ done:
     double check reseting phase and messages and button text
     add onClick handler object
     incapsulate methods into the card logic passed through handler
+    Cellar	Action	$2	+1 Action
+        Discard any number of cards.
+        +1 Card per card discarded.
+    Chapel	Action	$2	Trash up to 4 cards from your hand.
+    Moat	Action – Reaction	$2	+2 Cards
+    Chancellor	Action	$3	+$2 You may immediately put your deck into your discard pile.
+    Village	Action	$3	+1 Card; +2 Actions.
+    Woodcutter	Action	$3	+1 Buy; +$2.
+    Workshop	Action	$3	Gain a card costing up to $4.
+    Feast	Action	$4	Trash this card. Gain a card costing up to $5.
+    Moneylender	Action	$4	Trash a Copper from your hand. If you do, +$3.
+    Smithy	Action	$4	+3 Cards.
+    Festival	Action	$5	+2 Actions, +1 Buy; +$2.
+    Laboratory	Action	$5	+2 Cards; +1 Action.
+    Witch	Action – Attack	$5	+2 Cards Each other player gains a Curse card.
+    Market	Action	$5	+1 Card; +1 Action; +1 Buy; +$1.
+    Bureaucrat	Action – Attack	$4	Gain a silver card; put it on top of your deck. Each other player reveals a Victory card from his hand and puts it on his deck (or reveals a hand with no Victory cards).
+    Remodel	Action	$4	Trash a card from your hand. Gain a card costing up to $2 more than the trashed card.
+    Council Room	Action	$5	+4 Cards; +1 Buy Each other player draws a card.
+    Mine	Action	$5	Trash a Treasure card from your hand. Gain a Treasure card costing up to $3 more;
+        put it into your hand
+
+    
+Militia	Action – Attack	$4	+$2
 
 rightnow:
 
-    implement onPlay effects for all cards
+    implement onPlay effects for all cards:
+    Gardens	Victory	$4	Worth 1 Victory for every 10 cards in your deck (rounded down). - its in but buggy
+       
+    
+    
+    
+    Spy	Action – Attack	$4	+1 Card; +1 Action
+
+    
+    Throne Room	Action	$4	Choose an Action card in your hand. Play it twice.
+
+    Library	Action	$5	Draw until you have 7 cards in hand. You may set aside any Action cards drawn this way,
+        as you draw them; discard the set aside cards after you finish drawing.
+
+    Adventurer	Action	$6	Reveal cards from your deck until you reveal 2 Treasure cards. Put those Treasure
+       cards in your hand and discard the other revealed cards.
+
+
+
+
+
+
+
+
+
+
     show empty pile on screen
     hmmm I just realized that cards like the witch might be tricky
     make button text dynamic based on phase in the same way that message text is
@@ -77,6 +126,7 @@ rightnow:
     
 
 near term:
+    the draw,discard,gain,move methods in both player and deck classes need to be consolodated and generalized
     add somemore cards - pick 10 more fun one
     allow cards to remain in play area and not be discarded if they are persistant
     learn how yeild and generators work

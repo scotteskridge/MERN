@@ -33,7 +33,7 @@ export class Game {
   @observable numActionCards = 10 //this may change based on number of players
   // @observable AllCards = new AllCards
   @observable base_cards = new Deck() 
-  @observable chosen_actions = new Deck()
+  @observable chosen_actions = new Deck() //should probablly just call this actions
   @observable events
   @observable card_to_resolve
 
@@ -56,7 +56,7 @@ export class Game {
     this.curses = []
     this.action_cards = []
     this.chosen_actions = [] //needs to be an array of decks
-    this.trash = new Deck(null, "trash")
+    this.trash = new Deck(null, "trash", this)
     this.card_to_resolve = {}
     this.events = {
       "Action" : (card) =>{
@@ -71,8 +71,10 @@ export class Game {
       "Show" : (card) => {
         this.current_player.show_card(card)
       },
-      "Playing" : (card) => {console.log("Handler resolve hasn't been overwritten")},
-      "Resolve" : (card) => {console.log("Handler resolve hasn't been overwritten")},
+      "Playing" : (card) => {console.log("Handler Playing hasn't been overwritten")},
+      "Trashing" : (card) => {console.log("Handler Trashing hasn't been overwritten")},
+      "Resolve" : (card) => {console.log("Handler Resolve hasn't been overwritten")},
+      "Gain" : (card) => {console.log("Handler Resolve hasn't been overwritten")},
       
     }
 
@@ -123,10 +125,15 @@ export class Game {
     //not sure what happens if I call prompt from inside this class it should work
     //later on I'm going to need to have a modal pop up so this may need to call a componant
     //or be passed players from a componant
-    this.num_of_players = parseInt(prompt("Please enter the number of new players:"))
+
+
+    ////////////////// dev mode ////////////////////
+    // this.num_of_players = parseInt(prompt("Please enter the number of new players:"))
+    this.num_of_players =4
     if(this.num_of_players !=0){
       for (let i = 0; i < this.num_of_players; i++){
-        let name = prompt("Please enter the players name:")
+        // let name = prompt("Please enter the players name:")
+        let name = i
         let player = new Player(name, this) //should look into deconstruction again
         player.draw_hand()
         this.players.push(player)    
@@ -151,7 +158,7 @@ export class Game {
     // could do some funny business with makeing the cards location be "pile"
     // and makeing the curr_location
     for (let card of this.AllCards.BaseCards){
-    let pile = new Deck(card, "store")
+    let pile = new Deck(card, "store", this)
     this.base_cards.push(pile)
     //save the deck that has curses so I don't have to go look it up later 
       if(card == Curse){
@@ -189,6 +196,16 @@ export class Game {
     this.current_player.play_treasures()
     // this.current_player.message = "Select a card to buy"
     this.current_phase = "Buy"
+  }
+
+  find_deck(name, decktype){
+    console.log("find deck is looking for :", name , decktype)
+    for(let deck of decktype){
+      if(deck.name == name){
+        return deck
+      }
+    }
+    return 
   }
   //////////////// BUY PHASE METHODS ///////////////////////////
   @action end_buy(){

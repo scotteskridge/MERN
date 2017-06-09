@@ -1,5 +1,5 @@
 import  React from "react"
-import { Copper, Estate, Throneroom, Smithy, Card } from "./AllCards.js"
+
 import { observable, computed, action } from "mobx"
 import { DisplayCard } from "../componants/DisplayCard"
 import store from "../../../store"
@@ -26,13 +26,14 @@ export class Deck {
   @observable cards = []
   @observable deck_type = ""
   
-  constructor(card , deck_type ){
+  constructor(card , deck_type, owner ){
     // console.log("store at construction",store)
     this.cards = []
     if (card){
       let aCard = new card
+      this.name = aCard.name
       for(let i=0; i <aCard.pile_count; i++){
-        this.add_to(new card(store.current_game))
+        this.add_to(new card(store.current_game, owner))
       }
     }
     this.deck_type = deck_type
@@ -41,15 +42,10 @@ export class Deck {
   @computed get count(){
     return this.cards.length
   } 
-  @action starter_deck(){
-    if(!store){return null}
-    for (let i = 0; i < 7; i ++){
-      this.add_to(new Throneroom(store.current_game))
-    }
-    for (let i = 0; i < 3; i ++){
-      this.add_to(new Smithy(store.current_game))
-    }
-  }
+  //starter deck should really be in the game class this is especially obvious that store is throwing erros at
+  //init this is even more true as I don't really need to pass params for this... leaving here for now
+  //but come back and clean this up
+ 
 
   shuffle(){
     for(let i = 0; i <this.cards.length; i++){
@@ -59,10 +55,14 @@ export class Deck {
       this.cards[i] = temp
     }
   }
-  @action add_to =(card)=>{ 
+  @action add_to =(card, owner)=>{ 
     this.cards.push(card)
     card.curr_location = this
+    if(owner != undefined){
+      card.owner = owner
+    }
     // console.log(card)
+    return card
   }
 
   draw(card = undefined){

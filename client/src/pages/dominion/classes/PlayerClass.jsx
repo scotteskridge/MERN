@@ -1,5 +1,6 @@
 import { Deck } from "./DeckClass"
 // import store from "../../../store"
+import { Copper, Estate, Card, Cellar } from "./AllCards.js"
 import { autorun, observable, computed, action } from "mobx"
 
 export class Player {
@@ -19,6 +20,7 @@ export class Player {
       Playing : "While Playing card Message if you see me fix me"
     }
   @observable button_text = {}
+ 
 
    
 //consider making the a game pointer that refrences the game the player is in... then i don;t need
@@ -34,8 +36,6 @@ export class Player {
     this.hand = new Deck(null, "hand")
     this.played = new Deck(null, "played")
     this.discard = new Deck(null, "discard")
-    this.deck.starter_deck()
-    this.deck.shuffle()
     this.redraws = 0
     this.message = {
       Action : "Please select a card to play or pass",
@@ -49,11 +49,32 @@ export class Player {
       Playing : "Pass"
     }
     this.game = game
+    this.init_deck(this.game, this)
     // console.log(this)
     // this.draw_hand()
   }
 
+  @computed get total_cards(){
+    let total = 0
+    total += this.deck.count
+    total += this.hand.count
+    total += this.played.count
+    total += this.discard.count
+    return total
+  }
+
   ////////////////// INIT METHODS ////////////////////
+
+   @action init_deck(game, owner){
+    // if(!store){return null}
+    for (let i = 0; i < 7; i ++){
+      this.deck.add_to(new Copper(game, owner))
+    }
+    for (let i = 0; i < 3; i ++){
+      this.deck.add_to(new Estate(game, owner), this)
+    }
+    this.deck.shuffle()
+  }
 
   @action tally_score(){
     //was doing this by concating all decks into a master all cards and then
@@ -67,10 +88,10 @@ export class Player {
     return this.score
   }
 
-  draw(deck = undefined){
+  draw(target = undefined){
     //the default action will be to draw from maindeck but this is built to allow
     //drawing from any deck if needed
-    if(deck == undefined){
+    if(target == undefined){
       //if both decks are empty don't do anything
       if(this.deck.count <= 0 && this.discard.count <=0){
           return
@@ -80,12 +101,13 @@ export class Player {
         }
       //and then draw the first card... should maybe add an if check here to ensure
       //main deck is not empty but I think the reshuffle takes car of that
-      this.hand.add_to(this.deck.draw())
+      return this.hand.add_to(this.deck.draw())
     }
     
     else {
-      //put code here to draw from the passed in deck
-      return null}
+      this.hand.add_to(target.draw(), this)
+      return null
+    }
   }
   
 
@@ -100,15 +122,13 @@ export class Player {
 
   reshuffle(){
     while(this.discard.count > 0){
-      this.deck.add_to(this.discard.draw()) //this bit of code is likely alos going to cause a bug
+      this.deck.add_to(this.discard.draw(), this) //this bit of code is likely alos going to cause a bug
       this.deck.shuffle()
     }
   }
 
   //having the ability to play out of played is also causeing bugs
-  play_card(card){
-    //at some point I'm going to need to have a playable flag that can toggle
-    //and have that flag change or be observed by the card level onClick method
+  @action play_card(card){
     //going to need to do somethign similar with the discard allowing cards to stay in play for multiple turns
 
     //concider triggering the next phase as soon as actions hits 0
@@ -124,7 +144,7 @@ export class Player {
     this.actions -= 1
     this.put_in_play(card)
     this.message.Action = "Please select a card to play or pass"
-    card.OnPlay(this)
+
   }
 
   @action buy_card=(card)=>{
@@ -141,7 +161,7 @@ export class Player {
     }
     card.curr_location.remove(card)
     console.log("the cards location is", card.curr_location.deck_type)
-    this.played.add_to(card)
+    this.played.add_to(card, this)
     console.log("the cards location is", card.curr_location.deck_type)
     this.coins -= card.cost
     this.buys -= 1
@@ -150,19 +170,19 @@ export class Player {
     //could throw in some logic here to adjust empty piles count if deck.count ==0
     //but I'd need to import game
   }
-  discard_card(card = undefined){
+  @action discard_card(card = undefined){
     if(card == undefined){
       card = this.hand.discard()
-      return this.discard.add_to(card)
+      return this.discard.add_to(card, this)
     }
     //the add_to is affecting the location order matters
     card.curr_location.remove(card)  
-    this.discard.add_to(card)
+    this.discard.add_to(card, this)
   }
   
   trash_card(card){
     card.curr_location.remove(card)
-    this.game.trash.add_to(card)  
+    this.game.trash.add_to(card, this)  
   }
   show_card(card){
     // console.log("Player is showing a card:", card)
@@ -171,16 +191,20 @@ export class Player {
   //pulled this part out to skip validations notice on play effects dont trigger either
   put_in_play(card){
     this.hand.remove(card)
-    this.played.add_to(card)
-    this.update_stats(card)
+    this.played.add_to(card, this)
+    card.OnPlay(this)
+
   }
   trigger_effect(card){
-    this.update_stats(card)
     card.OnPlay(this)
   }
-  gain_curse(){
-    let card = this.game.curses.draw()
-    this.discard.add_to(card)
+  gain(card, deck = this.discard){
+    // card.curr_location.discard()
+    this.deck.add_to(card, this)
+  }
+  @action move(card, target){
+    card = card.curr_location.discard()
+    target.add_to(card, this)
   }
 
   play_treasures(){
@@ -191,14 +215,15 @@ export class Player {
     }
   }
 
-  @action update_stats(card){
-    this.actions += card.More_Actions
-    this.buys += card.buys
-    this.coins += card.coins
-    for(let i =0; i < card.Draws; i++){
-      this.draw()
-    }
-  }
+//moving this to the card on play becuase of throne room problems
+  // @action update_stats(card){
+  //   this.actions += card.More_Actions
+  //   this.buys += card.buys
+  //   this.coins += card.coins
+  //   for(let i =0; i < card.Draws; i++){
+  //     this.draw()
+  //   }
+  // }
 
   end_turn(){
     console.log(this.name, "is ending his turn")
