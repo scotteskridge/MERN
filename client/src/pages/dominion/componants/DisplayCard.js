@@ -19,9 +19,9 @@ export function DisplayCard(card) {
                 <ul className="card">
                     <li>Name: {card.name}</li>
                     <li>Cost: {card.cost}</li>
-                    <li>Victory Points : {card.Victory_Points}</li>
-                    <li>Type: {card.Type}</li>
-                    <li>Description: {card.Description}</li>
+                    <li>Victory Points : {card.victory_points}</li>
+                    <li>Type: {card.type}</li>
+                    <li>Description: {card.description}</li>
                 </ul>
             </div>
             

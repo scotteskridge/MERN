@@ -10,6 +10,7 @@ export default class PlayerDisplay extends React.Component {
 
     //ideally I'd like this button to have several states and change it's text based on the state
     //really the button just needs to show pass and end turn do i need state for the button text?
+    //the following logic should likely be in the game object and run through an event handler the same way the cards are 
     next_phase(){
         //moving all logic to gameclass side
        const { current_game } = this.props.store
@@ -26,14 +27,9 @@ export default class PlayerDisplay extends React.Component {
         }
         //leave the resolve action phase and return to the action phase
         if(current_game.current_phase == "Playing"){
-            console.log("the method to resolve is",current_game.card_to_resolve,current_game.card_to_resolve.resolve )
-            if(current_game.card_to_resolve.resolve){
-                current_game.card_to_resolve.resolve(current_player)
-
-            }
-            current_game.card_to_resolve = {}
-            current_game.current_phase ="Action" //not sure this is always going to be 
-            //true but it works for right now
+            current_game.check_events()
+            current_game.check_stack()
+           
             return
         }
     }

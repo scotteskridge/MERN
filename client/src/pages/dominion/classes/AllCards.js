@@ -6,49 +6,72 @@ import  store  from "../../../store"
 //I could do the same thing here that i did with player
 //rather than having type as a string I should likely have type as an
 //interface then only cards that are of type victory need to have an atribute
-//of Victory_Points
+//of victory_points
 //all of these arributes really should be lower case
 export class Card{
   @observable curr_location = ""
   constructor(game, owner){
 
    this.cost = 0
-  //  this.Victory_Points = 0
-   this.type // Action, Victory, Action - Attack, Action - Reaction, Treasure
-   this.name
+  //  this.victory_points = 0 // had to change this to accomodate the gardens
+   this.type ="" // Action, Victory, Action  Attack, Action Reaction, Treasure/// Useing type.include("Type") allows cards to be of multiple types ... maybe this should be4 changed to an interface?
+   this.name = this.constructor.name //would love this to just be name = CardClassName
   //  this.Ability //This might need to be an object with methods?
-   this.More_Actions
-   this.buys
+   this.more_actions=0
+   this.buys=0
    this.coins = 0
-   this.Draws
-   this.Description
-   // deck, hand, played, discard, pile, trash
-   // this may end up as an object litteral to map back to this.player.hand
-   //not sure I need both of these may only need one or the other
-  //  this.locations ={"deck" : null, "hand" : null, "played" : null, "discard" : null, "pile" : "im in a pile", "trash": null} 
+   this.draws=0
+   this.description=""
    this.curr_location = "pile"
    this.game = game
    this.owner = owner
   }
-  @action OnPlay(player = this.owner){
-   
-    //this would be a great place to add to current_game.log when I make one
-    player.message.Action = ( `${player.name}, played a ${this.name}. `+ "\n").concat(player.message.Action)
-    player.actions += this.More_Actions
-    player.buys += this.buys
-    player.coins += this.coins
-    for(let i =0; i < this.Draws; i++){
-      player.draw()
-    }
 
+  //so when a card is played the player removes it from hand puts it on the board
+  //and pushes it onto the stack ... changed this so the player does the pushing onto the stack
+  //it doesnt actually do anything until it comes off of the stack, and nothing
+  //comes off the stack until we check for it to happen
+  //the game needs to control when cards come off the stack
+  //the first time it get triggered is immediatly after the playcard event
+  //controled by the event controler
+  //when it comes off the stack it updates the players stats and then resolves
+  //any on_play effect.. as soon as its done wiht it's effect it returns to the begining
+  //of the aciton phase the action pahse is in charge of setting the phase to action
+  //the card is in charge of setting the phase to playing the resolve stack loop needs
+  //to only continue if the phase is action
+  @action on_play(player = this.owner){
+    //this would be a great place to add to current_game.log when I make one
+    //ive gotten tangled up with on play vs resolve vs trigger vs starting the action phase so regaurdless of what my code currently says heres what the order of operations needs to be
+    //start the turn 
+    //set phase to action
+    //wait for player to play a card
+    //select card and put it on the stack
+    //the card does nothing until it comes off the stack
+    //after selection resolve the top card of the stack
+    //after resolve is finished check if there is more on the stack
+    //part of the problem is the on_play isnt causeing the game to wait
+    //its only changing the effect of what clicking on a card does
+    player.message.Action = ( `${player.name}, played a ${this.name}. `+ "\n").concat(player.message.Action) //not sure why this is getting overwritten
+    this.game.current_phase = "Action"
+    this.game.check_stack()
+    return this
 
   }
 
-  // OnPlay(player){
-   
-  //   Console.log(`${player.name} played a ${this.name}`)
-  // }
-
+  @action resolve(player = this.owner){
+    this.update_stats(player)
+    this.on_play(player)
+    return null //I think this should return to action phase
+  }
+  @action update_stats(player){
+    player.actions += this.more_actions
+    player.buys += this.buys
+    player.coins += this.coins
+    for(let i =0; i < this.draws; i++){
+      player.draw()
+    }
+    return
+  }
 }
 
 // import Copper from '../../../static/assets/Copper.jpg' //not sure why this doesnt work
@@ -79,41 +102,35 @@ export class AllCards{
 export class Copper extends Card {
   constructor(game, owner){
     super(game, owner)
-    this.cost = 0
-    this.Victory_Points = 0
     this.type = "Treasure"
-    this.name = "Copper"
-    this.More_Actions = 0
-    this.buys = 0
+    this.victory_points = 0
     this.coins = 1
-    this.Draws = 0
-    this.Description = `A ${this.name} gives ${this.coins} coins`
+    this.description = `A ${this.name} gives ${this.coins} coins`
     this.pile_count = 60 
     
    }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   console.log(player)
+  // }
 }
 
 export class Silver extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 3
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Treasure"
-    this.name = "Silver"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 2
-    this.Draws = 0
-    this.Description = `A ${this.name} has a buying value of 2`
+    this.draws = 0
+    this.description = `A ${this.name} has a buying value of 2`
     this.pile_count = 40 
     }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
+  on_play(player){
+    super.on_play(player)
+    // console.log(player)
   }
 }
 
@@ -121,19 +138,18 @@ export class Gold extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 6
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Treasure"
-    this.name = "Gold"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 3
-    this.Draws = 0
-    this.Description = `A ${this.name} has a buying value of 3`
+    this.draws = 0
+    this.description = `A ${this.name} has a buying value of 3`
     this.pile_count = 30 
     }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
+  on_play(player){
+    super.on_play(player)
+    // console.log(player)
   }
 }
 
@@ -141,19 +157,18 @@ export class Estate extends Card {
   constructor(game, owner){
     super(game, owner)
     this.cost = 2
-    this.Victory_Points = 1
+    this.victory_points = 1
     this.type = "Victory"
-    this.name = "Estate"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 0
-    this.Draws = 0
-    this.Description = `An ${this.name} is worth 1 Victory Point`
+    this.draws = 0
+    this.description = `An ${this.name} is worth 1 Victory Point`
     this.pile_count = 24 
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
+  on_play(player){
+    super.on_play(player)
+    // console.log(player)
   }
 }
 
@@ -161,19 +176,18 @@ export class Duchy extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 3
+    this.victory_points = 3
     this.type = "Victory"
-    this.name = "Duchy"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 0
-    this.Draws = 0
-    this.Description = `A ${this.name} is worth 3 Victory Points`
+    this.draws = 0
+    this.description = `A ${this.name} is worth 3 Victory Points`
     this.pile_count = 12 
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
+  on_play(player){
+    super.on_play(player)
+    // console.log(player)
   }
 }
 
@@ -181,74 +195,75 @@ export class Province extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 8
-    this.Victory_Points = 6
+    this.victory_points = 6
     this.type = "Victory"
-    this.name = "Province"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 0
-    this.Draws = 0
-    this.Description = `A ${this.name} is worth 6 Victory Points`
+    this.draws = 0
+    this.description = `A ${this.name} is worth 6 Victory Points`
     this.pile_count = 12 
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
+  on_play(player){
+    super.on_play(player)
+    // console.log(player)
   }
 }
 export class Curse extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 0
-    this.Victory_Points = -1
+    this.victory_points = -1
     this.type = "Victory"
-    this.name = "Curse"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 0
-    this.Draws = 0
-    this.Description = `A ${this.name} subtracts 1 from your final score`
+    this.draws = 0
+    this.description = `A ${this.name} subtracts 1 from your final score`
     this.pile_count = 24 // might be fun to do somethign with this similar to the garden and make it's pile count dynamic based on players in the game 
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
+  on_play(player){
+    super.on_play(player)
+    // console.log(player)
   }
 }
 
+//pretty sure my cellar is broken right now needto fix this after stack is fully functional
+
+//ok my celler doesn't work with my concept of how the rest of the cards trigger
+//mostly becuase it triggers twice once to effect the button and the a second
+//time to redraw I could leave it on the stack until it redraws? I could enque a 
+//resolve object? Ok the cellar is hurting my brain I'm going to leave this one and come back to it
+//ok I actually think I need a second stack of card effects for delayed effects
 export class Cellar extends Card {
   constructor(game, owner){
     super(game, owner)
     this.cost = 2
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Cellar"
-    this.More_Actions = 1
+    this.more_actions = 1
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
+    this.draws = 0
     this.redraws = 0
-    this.Description = `the ${this.name} let's you discard cards to redraw`
+    this.description = `the ${this.name} let's you discard cards to redraw`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-    this.game.current_phase = "Cellar"
+  on_play(player){
+    this.game.event_stack.push(this)
+    // console.log(player)
+    this.game.current_phase = "Playing"
     player.message.Playing = "Choose a card to discard or pass"
     this.game.current_phase = "Playing"
     this.game.events["Playing"] = (card) => {
       if(card.curr_location.deck_type !== "hand") {
-        return this.current_player.message.Cellar = "please select a card from your hand to discard"
+        return this.current_player.message.Playing = "please select a card from your hand to discard"
       }
       player.discard_card(card)
       this.redraws++
-      this.game.card_to_resolve = this //wonder if I can use this for the throneroom?
     }
-   
-
   }
-  resolve(player){
+  event(player){
     while(this.redraws >0){
       player.draw()
       this.redraws--
@@ -263,23 +278,23 @@ export class Chapel extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 2
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Chapel"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
+    this.draws = 0
     this.trash = 4
-    this.Description = `A ${this.name} let's you trash upto 4 cards from your hand`
+    this.description = `A ${this.name} let's you trash upto 4 cards from your hand`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    // console.log(player)
-    //would probably be a good gameea to push these into an array and on clicking confirm
+  on_play(player){
+    // super.update_stats(player) // do you update stats before or after resolveing effect? not sure
+    //would probably be a good idea to have an obj/arr to push these into and on clicking confirm trash all of them, that would allow to have a modal of selected cards tos cancle and confirm this would then look a lot like the celler with a confirm action that would trigger the rest of the cards action
+    //which really mean that cards need an off the stack phase and a resolve phase
+    //does that mean that I need to keep track of a played_stack and a resolve effect stack? 
     //go through the array and trash all of them but one problem at a time
-    this.trash = 4 // this resets it on play ... it does mean that the trashes available are wring while its in my discard
+    this.trash = 4 // this resets it on play ... it does mean that the trashes available are wrong while its in my discard
     player.message.Playing = "Choose up to four cards to trash or pass"
     this.game.current_phase = "Playing"
     this.game.events["Playing"] = (card) => {
@@ -288,34 +303,40 @@ export class Chapel extends Card{
       this.trash--
       
       if(this.trash <=0){
-        this.game.current_phase = "Action"
+        // this.game.current_phase = "Action"
         this.trash = 4
+        super.on_play(player)
         return
       }
+    
     }
+    
   }
-
+  // resolve(player){
+  //   super.resolve(player)
+ 
   
+  // } 
 }
+
 export class Moat extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 2
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Reaction Action"
-    this.name = "Moat"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.coins = 0
-    this.Draws = 2
-    this.Description = `A ${this.name} protects you from attacks`
+    this.draws = 2
+    this.description = `A ${this.name} protects you from attacks`
     this.pile_count = 10 
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-    return
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   // console.log(player)
+  //   return
+  // }
   OnShow(card){
     console.log("You showed the moat",card)
     return
@@ -326,79 +347,84 @@ export class Chancellor extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 3
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Reaction Action"
-    this.name = "Chancellor"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count =10   
     this.coins = 2
-    this.Draws = 0
-    this.Description = `The ${this.name} puts your Deck into your discard pile`
+    this.draws = 0
+    this.description = `The ${this.name} puts your Deck into your discard pile`
     }
-  OnPlay(player){
-    super.OnPlay(player)
-    //I'd love to do for(let card of player.deck){player.discard(card)} //i know this broke shit in c#
+  on_play(player){
     for(let card of player.deck.cards){
       player.discard_card(card)
     }
-    return
+    super.on_play(player)
   }
 }
 export class Village extends Card {
   constructor(game, owner){
     super(game, owner)
     this.cost = 3
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Village"
-    this.More_Actions = 2
+    this.more_actions = 2
     this.buys = 0
     this.coins = 0
-    this.Draws = 1
-    this.Description = `The ${this.name} gives 2 actions and 1 draw`
+    this.draws = 1
+    this.description = `The ${this.name} gives 2 actions and 1 draw`
     this.pile_count = 10 
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-  }
+  //ok so this is only nessasary if I'm overwriting the Cards methods
+  // on_play(player){
+  //   super.on_play(player)
+  //   console.log("and this is in the village I'm expecting it to trigger second")
+
+  // }
+  // resolve(player){
+  //   // console.log("before the card resolve inside village", player)
+  //   super.resolve(player)
+  //   // console.log("after the card resolve inside village", player)
+  // }
 }
 export class Woodcutter extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 3
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Woodcutter"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 1
     this.pile_count = 10 
     this.coins = 2
-    this.Draws = 0
-    this.Description = `The ${this.name} gives you another buy`
+    this.draws = 0
+    this.description = `The ${this.name} gives you another buy`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Workshop extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 3
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Workshop"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10
-    this.coins = 2
-    this.Draws = 0
-    this.Description = `The ${this.name} let's you gain a card upto cost 4`
+    this.coins = 0
+    this.draws = 0
+    this.description = `The ${this.name} let's you gain a card upto cost 4`
     }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
     player.message.Playing = "Gain a card costing up to 4 coins"
     this.game.current_phase = "Playing"
     this.game.events["Playing"] = (card) => {
@@ -406,27 +432,32 @@ export class Workshop extends Card{
       if(card.cost > 4) {return player.message.Playing = "Card must cost 4 or less"}
       card.curr_location.draw(card)
       player.played.add_to(card)
-      this.game.current_phase = "Action"
-      return
+
+    super.on_play(player)
     }
   }
+  //   resolve(player){
+  //   // console.log("before the card resolve inside village", player)
+  //   super.resolve(player)
+  //   // console.log("after the card resolve inside village", player)
+  // }
 }
+
 export class Feast extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Feast"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count =10
     this.coins = 2
-    this.Draws = 0
-    this.Description = `The ${this.name} trashes it's self to gain a card upto 5 cost`
+    this.draws = 0
+    this.description = `The ${this.name} trashes it's self to gain a card upto 5 cost`
     }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+    super.on_play(player)
     player.message.Playing = "Gain a card costing up to 5 coins"
     this.game.current_phase = "Playing"
     this.game.events["Playing"] = (card) => {
@@ -435,29 +466,32 @@ export class Feast extends Card{
       card.curr_location.draw(card)
       player.played.add_to(card)
       player.trash_card(this)
-      // console.log(this.game.trash)
-      this.game.current_phase = "Action"
-      return
+      super.on_play(player)
+
     }
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Militia extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Attack Action"
-    this.name = "Militia"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10
     this.coins = 2
-    this.Draws = 0
-    this.Description = `The ${this.name}causes other players to discard down to 3 cards`
+    this.draws = 0
+    this.description = `The ${this.name}causes other players to discard down to 3 cards`
     }
-  OnPlay(player){
-    super.OnPlay(player)    //right now I'm just going to discard from 0th index
+  on_play(player){
+    super.on_play(player)    //right now I'm just going to discard from 0th index
     //once sockets are in this needs to be a prompt
     for(let other_player of this.game.players){
       if (other_player!= player){
@@ -468,24 +502,29 @@ export class Militia extends Card{
         }
       }
     }
+    super.on_play(player)
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 export class Witch extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Attack Action"
-    this.name = "Witch"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 2
-    this.Description = `The ${this.name} gives  other players curses`
+    this.draws = 2
+    this.description = `The ${this.name} gives  other players curses`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+    super.on_play(player)
     let deck = this.game.find_deck("Curse", this.game.base_cards)
     for(let other_player of this.game.players){
       if (other_player!= player){
@@ -494,7 +533,13 @@ export class Witch extends Card{
         // console.log(player)
       }
     }
+    super.on_play(player)
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // } 
 }
 
 
@@ -502,18 +547,17 @@ export class Moneylender extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Moneylender"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
-    this.Description = `The ${this.name} let's you trash a copper to gain +3 coins`
+    this.draws = 0
+    this.description = `The ${this.name} let's you trash a copper to gain +3 coins`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+
     player.message.Playing = "Trash a copper to gain 3 coins"
     this.game.current_phase = "Playing"
     this.game.events["Playing"] = (card) => {
@@ -521,141 +565,170 @@ export class Moneylender extends Card{
       player.trash_card(card)
       player.coins +=3
       this.game.current_phase = "Action"
-      return
+      super.on_play(player) 
     }
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // } 
 }
 
 export class Smithy extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Smithy"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 3
-    this.Description = `The ${this.name} draws 3 more cards`
+    this.draws = 3
+    this.description = `The ${this.name} draws 3 more cards`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   // console.log(player)
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Throneroom extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Throneroom"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
-    this.Description = `The ${this.name} let's you play an action twice`
+    this.draws = 0
+    this.description = `The ${this.name} let's you play an action twice`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    //man I keep seeing this pattern over and over I with there was some wya to make this more generic so i didn't have to keep redoing this logic
+  on_play(player){
+    //man I keep seeing this pattern over and over I with there was some wya to   make this more generic so i didn't have to keep redoing this logic
     //ok this works fine for very simple action but it doesn't work on triggering on play effects well 
     //I think what i need to do is make a stack object and push effects into the
     //stack and then return to the stack to resolve them once complete
     //thats more than i feel like tackleing right now so I'll come back to it
+    //so when the throne room is played it prompts you to select a card 
+    //it pushes one phantom copy onto the stack and causes the player to place
+    //one card from their hand onto the stack
+    //at what point to I want to go back and look at the stack?
+
     player.message.Playing = "Choose an action to play twice"
     this.game.current_phase = "Playing"
     this.game.events["Playing"] = (card) => {
       if(card.curr_location.deck_type !== "hand" || !card.type.includes("Action")) {return player.message.Playing = "please select an Action from your hand"}
-      player.put_in_play(card)
-      card.OnPlay(player)
-
-      player.trigger_effect(card)
-      this.game.current_phase = "Action"
-      return
+      this.game.resolve_stack.push(card)
+      player.put_in_play(card) // ok player puts one copy in play and the other copy triggers
+      //I think the throne room needs to trigger this.game.begin_action_phase() but not sure
+      // this.game.current_phase = "Action"
+ 
+      super.on_play(player)
     }
+    
   }
+  // resolve(player){
+  // super.resolve(player)
+  
+
+  // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Festival extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Festival"
-    this.More_Actions = 2
+    this.more_actions = 2
     this.buys = 1
     this.pile_count = 10 
     this.coins = 2
-    this.Draws = 0
-    this.Description = `The ${this.name} gives you more actions buys and coins`
+    this.draws = 0
+    this.description = `The ${this.name} gives you more actions buys and coins`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   // console.log(player)
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Laboratory extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Laboratory"
-    this.More_Actions = 1
+    this.more_actions = 1
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 2
-    this.Description = `The ${this.name} gives you 2 draws and 1 action`
+    this.draws = 2
+    this.description = `The ${this.name} gives you 2 draws and 1 action`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   // console.log(player)
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 export class Market extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Market"
-    this.More_Actions = 1
+    this.more_actions = 1
     this.buys = 1
     this.pile_count = 10 
     this.coins = 1
-    this.Draws = 1
-    this.Description = `The ${this.name} gives you ${this.Draws} draw, ${this.buys} buy, ${this.coins} and ${this.More_Actions} action`
+    this.draws = 1
+    this.description = `The ${this.name} gives you ${this.draws} draw, ${this.buys} buy, ${this.coins} and ${this.more_actions} action`
   }
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(player)
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   // console.log(player)
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Bureaucrat extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action Attack"
-    this.name = "Bureaucrat"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
-    this.Description = `Gain a silver card put it on top of your deck. Each other player reveals a Victory card from his hand and puts it on his deck (or reveals a hand with no Victory cards).`
+    this.draws = 0
+    this.description = `Gain a silver card put it on top of your deck. Each other player reveals a Victory card from his hand and puts it on his deck (or reveals a hand with no Victory cards).`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
     //running into the same problem I had with the curses so I'm going to me a game.find_deck
     let deck = this.game.find_deck("Silver", this.game.base_cards)
     let silver = deck.draw()
@@ -671,26 +744,31 @@ export class Bureaucrat extends Card{
         }
       }
     }
+    super.on_play(player)
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Remodel extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 4
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Remodel"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
+    this.draws = 0
     this.gain_amount = 2
-    this.Description = `Trash a card from your hand. Gain a card costing up to $2 more than the trashed card.`
+    this.description = `Trash a card from your hand. Gain a card costing up to $2 more than the trashed card.`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+    
     //it's interesting that player stays bound to this through the entire resolution
     player.message.Playing = "Choose a card to trash or pass"
     this.game.current_phase = "Playing"
@@ -707,54 +785,63 @@ export class Remodel extends Card{
         if(card.curr_location.deck_type !== "store" || card.cost > this.gain_amount) {return player.message.Playing = `please select a card from the store with a cost less than ${this.gain_amount}`}  
 
         player.move(card, player.played)
-        this.game.current_phase = "Action"
+        this.gain_amount = 2 //reseting for the throneroom
+        super.on_play(player)
       }
     }
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class CouncilRoom extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "CouncilRoom"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 1
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 4
-    this.Description = `+4 Cards; +1 Buy Each other player draws a card.`
+    this.draws = 4
+    this.description = `+4 Cards; +1 Buy Each other player draws a card.`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
     //it's interesting that player stays bound to this through the entire resolution
     for(let other_player of this.game.players){
       if(other_player != player){
         other_player.draw()
       }
     }
+    super.on_play(player)
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Mine extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Mine"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
+    this.draws = 0
     this.gain_amount = 3
-    this.Description = `Trash a Treasure card from your hand. Gain a Treasure card costing up to $3 more; put it into your hand.`
+    this.description = `Trash a Treasure card from your hand. Gain a Treasure card costing up to $3 more; put it into your hand.`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+
     //it's interesting that player stays bound to this through the entire resolution
     player.message.Playing = "Choose a card to trash or pass"
     this.game.current_phase = "Playing"
@@ -772,61 +859,68 @@ export class Mine extends Card{
         if(card.curr_location.deck_type !== "store" || card.cost > this.gain_amount || !card.type.includes("Treasure")) {return player.message.Playing = `please select a Treasure from the store with a cost less than ${this.gain_amount}`}  
 
         player.move(card, player.hand)
-        this.game.current_phase = "Action"
+        this.gain_amount = 3
+        super.on_play(player)
       }
     }
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
-
-//disableing gardens until I understand computed a little better
 
 export class Gardens extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 0
-    // this.Victory_Points =  Math.floor(owner.total_cards/10)
+    // this.victory_points =  Math.floor(owner.total_cards/10)
     this.type = "Victory Action"
-    this.name = "Gardens"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
+    this.draws = 0
     this.gain_amount = 3
-    this.Description = `Worth 1 Victory for every 10 cards in your deck (rounded down).`
+    this.description = `Worth 1 Victory for every 10 cards in your deck (rounded down).`
 
   }
-  @computed get Victory_Points(){
+  @computed get victory_points(){
     if(!this.owner || !this.owner.total_cards){return 0}
     return  Math.floor(this.owner.total_cards/10)
     } 
-  // set Victory_Points(owner){
+  // set victory_points(owner){
   //   if(!this.owner || !this.owner.total_cards){return 0}
   //   return  Math.floor(owner.total_cards/10)
   //   } 
-  OnPlay(player){
-    super.OnPlay(player)
-    console.log(this.owner)
-    return null
-  }
+  // on_play(player){
+  //   super.on_play(player)
+  //   console.log(this.owner)
+  //   return null
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Library extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Library"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
-    this.Description = `Draw until you have 7 cards in hand. You may set aside any Action cards drawn this way, as you draw them; discard the set aside cards after you finish drawing.`
+    this.draws = 0
+    this.description = `Draw until you have 7 cards in hand. You may set aside any Action cards drawn this way, as you draw them; discard the set aside cards after you finish drawing.`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+
     //it's interesting that player stays bound to this through the entire resolution
     while(player.hand.count < 7){
       let card = player.draw()
@@ -838,25 +932,30 @@ export class Library extends Card{
         }
       }
     }
+    super.on_play(player)
   }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
 }
 
 export class Adventurer extends Card{
   constructor(game, owner){
     super(game, owner)
     this.cost = 5
-    this.Victory_Points = 0
+    this.victory_points = 0
     this.type = "Action"
-    this.name = "Adventurer"
-    this.More_Actions = 0
+    this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
     this.coins = 0
-    this.Draws = 0
-    this.Description = `Draw cards from your deck until you have drawn 2 Treasure cards. Put those Treasure cards in your hand and discard the other drawn cards.`
+    this.draws = 0
+    this.description = `Draw cards from your deck until you have drawn 2 Treasure cards. Put those Treasure cards in your hand and discard the other drawn cards.`
   }
-  OnPlay(player){
-    super.OnPlay(player)
+  on_play(player){
+    
     let count =2
     //it's interesting that player stays bound to this through the entire resolution
     while(count > 0){
@@ -867,5 +966,12 @@ export class Adventurer extends Card{
       }else{count--}
       
     }
+    super.on_play(player)
+  // }
+  // resolve(player){
+  // // console.log("before the card resolve inside village", player)
+  // super.resolve(player)
+  // // console.log("after the card resolve inside village", player)
+  // }
   }
 }

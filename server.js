@@ -8,7 +8,7 @@ const PORT = 5000
 
 app.use(bodyParser.json())
 // app.use(express.static(path.join(__dirname, "./client/build"))) //why dont i need this?
-app.use(express.static(path.join(__dirname, "./node_modules")))
+app.use(express.static(path.join(__dirname, "./node_modules"))) //i think this should be client/build
 
 require("./server/config/mongoose.js")
 require("./server/config/routes.js")(app)

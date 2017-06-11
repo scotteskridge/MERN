@@ -90,7 +90,7 @@ export class Deck {
   tally(){
     let score = 0
     for(let card of this.cards){
-      if(card.Victory_Points){ score += card.Victory_Points}
+      if(card.victory_points){ score += card.victory_points}
     }
     return score
   }

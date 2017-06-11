@@ -12,8 +12,8 @@ export default class GameState extends React.Component {
 	}
 
 	displayProp(){
-		console.log("Current Player from injecting is:", this.props.store.current_game.current_player)
-		console.log("played cards from store is:", store.current_game.current_player.played.cards)
+		console.log("Current Game from injecting is:", this.props.store.current_game)
+		console.log("Current phase is:", store.current_game.current_phase)
 	}
 
 	render(){
@@ -24,7 +24,7 @@ export default class GameState extends React.Component {
 		return (
 			<div>
 				<h4>The GameState</h4>
-        <button className="ui button" onClick={this.displayProp.bind(this)}>display store </button>
+        <button className="ui button" onClick={this.displayProp.bind(this)}>Check Game State </button>
 
 				<ul>
 					<li> </li>

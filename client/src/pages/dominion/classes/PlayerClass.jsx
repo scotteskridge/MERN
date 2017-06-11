@@ -1,6 +1,6 @@
 import { Deck } from "./DeckClass"
 // import store from "../../../store"
-import { Copper, Estate, Card, Cellar } from "./AllCards.js"
+import { Copper, Estate, Card, Cellar, Throneroom, Village,Workshop } from "./AllCards.js"
 import { autorun, observable, computed, action } from "mobx"
 
 export class Player {
@@ -50,8 +50,6 @@ export class Player {
     }
     this.game = game
     this.init_deck(this.game, this)
-    // console.log(this)
-    // this.draw_hand()
   }
 
   @computed get total_cards(){
@@ -142,14 +140,23 @@ export class Player {
     }
 
     this.actions -= 1
+    // console.log("trying to put in play ",card)
     this.put_in_play(card)
     this.message.Action = "Please select a card to play or pass"
+  }
 
+  put_in_play(card){
+  // console.log("trying to put in play ",card)
+  this.hand.remove(card)
+  this.played.add_to(card, this)
+  this.game.resolve_stack.push(card) //at this point the same card should be in 2 arrays
+  //the played.cards and the resolve stack, but its location attribute should reflect
+  //the played.cards
   }
 
   @action buy_card=(card)=>{
-    console.log(this.name, "is trying to buy", card)
-    console.log("the cards location is", card.curr_location.deck_type)
+    // console.log(this.name, "is trying to buy", card)
+    // console.log("the cards location is", card.curr_location.deck_type)
     //concider triggering the next phase as soon as buys hits 0
     if(this.buys <=0){
       this.message.Buy = "You're out of buys"
@@ -160,9 +167,7 @@ export class Player {
       return false
     }
     card.curr_location.remove(card)
-    console.log("the cards location is", card.curr_location.deck_type)
     this.played.add_to(card, this)
-    console.log("the cards location is", card.curr_location.deck_type)
     this.coins -= card.cost
     this.buys -= 1
     this.message.Buy = "Please select a card to buy or pass"
@@ -189,14 +194,9 @@ export class Player {
   }
   
   //pulled this part out to skip validations notice on play effects dont trigger either
-  put_in_play(card){
-    this.hand.remove(card)
-    this.played.add_to(card, this)
-    card.OnPlay(this)
 
-  }
-  trigger_effect(card){
-    card.OnPlay(this)
+  trigger_effect(card){ //becuase of how I reworks the card methods I don't actually need this anymore i don;t think
+    card.to_stack(this)
   }
   gain(card, deck = this.discard){
     // card.curr_location.discard()
@@ -226,7 +226,7 @@ export class Player {
   // }
 
   end_turn(){
-    console.log(this.name, "is ending his turn")
+    // console.log(this.name, "is ending his turn")
     //eventually this will need to be for every card with discard = true
     //move cards to discard pile
 

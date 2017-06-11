@@ -35,7 +35,7 @@ export class Game {
   @observable base_cards = new Deck() 
   @observable chosen_actions = new Deck() //should probablly just call this actions
   @observable events
-  @observable card_to_resolve
+  // @observable resolve_stack =[]
 
 
   constructor(){
@@ -49,7 +49,7 @@ export class Game {
     this.current_player = new Player
     this.turn = 0 //mayt wan this for a time machine
     this.current_phase = ""
-    this.phase = ["Action", "Buy", "Cleanup"]
+    // this.phase = ["Action", "Buy", "Cleanup"]
     this.numActionCards = 10 //this may change based on number of players
     this.AllCards = new AllCards
     this.base_cards = [] //needs to be an array of decks
@@ -57,11 +57,14 @@ export class Game {
     this.action_cards = []
     this.chosen_actions = [] //needs to be an array of decks
     this.trash = new Deck(null, "trash", this)
-    this.card_to_resolve = {}
+    this.resolve_stack = [] //all cards push themselves to the stack on_play
+    this.event_stack = []
     this.events = {
       "Action" : (card) =>{
          if(card.curr_location.deck_type !== "hand") {return this.current_player.message.Action = "please select a card from your hand"}
         this.current_player.play_card(card)
+        this.check_stack()
+
       },
       "Buy" : (card) => {
         if(card.curr_location.deck_type !== "store") {return this.current_player.message.Buy = "please select a card from the store"}
@@ -79,26 +82,10 @@ export class Game {
     }
 
   }
+  //this routes all click events to the event object and the event object is remapped
+  //by card.on_play methods
     @action card_action_handler(card){
-    return (this.events[this.current_phase])(card)
-    // 
-    //i need to set this up to either only accept decks or cards i think,
-    //when playing from hand I'm clicking on cards
-    //when buying a card i'm clicking on decks
-    //does it matter? if this think is only routing the input to 
-    //some mapped output the type of the input can change right?
-    //buy - deck
-    //play - card
-    //trash - card
-    //discard - card
-    //show - card
-    //ok so really the problem is that buying is buying a card but is affecting the count of the deck
-    //alright this jusy needs to pass around cards and I'll fix the buy method to accpet cards
-    //I think cards are goingto need to validate their own location so that I can check if it's ok to buy them or play them
-     
-
-    // return this.action_phase_map[this.current_phase](card)
-    
+    return (this.events[this.current_phase])(card)    
   }
 
 //////////////// INIT METHODS ///////////////////////////
@@ -188,9 +175,59 @@ export class Game {
     }
   }
 
+// let resolve = []
+// let thing = {1:1}
+// let thing2 = {2:2}
+// resolve.push(thing)
+// resolve.push(thing2)
+// resolve.push(thing2)
+// resolve.push(thing)
+// resolve.push(thing)
+
+// while(resolve.length){
+// console.log(resolve[resolve.length-1])
+// resolve.pop()
+// console.log(resolve[resolve.length-1])
+// }
+
 
   
   //////////////// ACTION PHASE METHODS ///////////////////////////
+
+  //ok so the problem is when to trigger this 
+  @action begin_action_phase(){
+    this.current_phase = "Action"
+    console.log("at start of resolve resolve phase the stack is", this.resolve_stack)
+    //at the start of the action phase check if there are anycards that
+    //need to be resovled and resolve them, once all cards are resolved
+    //then reset player feedback revert to Action phase and wait for next input
+    //the first thing every card on play needs to do is push itself onto the
+    //stack and the last thing is to call game.begin_action()
+    
+
+    // I could likely handle all of the message and phase change from in here 
+    //pull the variables from the card being resolved but updating with those
+    //variables useing logic in this while loop
+
+  }
+
+  @action check_stack(){
+    if(this.resolve_stack.length>0){
+      let current_card = this.resolve_stack[this.resolve_stack.length-1]
+      this.resolve_stack.pop()
+      current_card.resolve(this.current_player)
+    } else { this.current_phase = "Action"}
+  }
+  @action check_events(){
+    //this is a little fragile but we're assuming nothing is going on
+    //the event stack unless is has an event to resolve
+      if(this.event_stack.length>0){
+        let current_event= this.event_stack[this.event_stack.length-1]
+        this.event_stack.pop()
+        current_event.event(this.current_player)
+    } else { this.current_phase = "Action"}
+  }
+  
 
   @action end_action(){
     this.current_player.play_treasures()
