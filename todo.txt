@@ -101,7 +101,7 @@ done:
     Militia	Action – Attack	$4	+$2
 
 rightnow:
-
+    fix coins bug
     implement sockets for a chat screen in the tutorial side
     have a login and register for new players
     implement multiplayer

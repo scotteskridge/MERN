@@ -12,6 +12,7 @@ export class Player {
   @observable deck = new Deck()
   @observable hand = new Deck()
   @observable played = new Deck()
+  @observable bought = new Deck()
   @observable discard = new Deck()
   @observable message = {
       Action : "Please select a card to play or pass",
@@ -30,10 +31,11 @@ export class Player {
     this.buys = 1
     this.coins = 0
     this.handSize = 5
-    this.deck = new Deck(null, "deck") //this deck name is a poorly descriptive should this be draw_deck?
-    this.hand = new Deck(null, "hand")
-    this.played = new Deck(null, "played")
-    this.discard = new Deck(null, "discard")
+    this.deck = new Deck(null, "deck", this) //this deck name is a poorly descriptive should this be draw_deck?
+    this.hand = new Deck(null, "hand", this)
+    this.played = new Deck(null, "played", this)
+    this.bought = new Deck (null, "bought", this)
+    this.discard = new Deck(null, "discard", this)
     this.redraws = 0
     this.message = {
       Action : "Please select a card to play or pass",
@@ -66,10 +68,13 @@ export class Player {
       .reduce((a,b) => a+b, 0)
   }
 
-  tally_coins(){ //put this into the deck class
+  get tally_coins(){ //put this into the deck class
     let coins = 0
     for (const card of this.played.cards){
       coins += card.tally_coins()
+    }
+    for (const card of this.bought.cards){
+      coins -= card.cost
     }
     return coins
   }
@@ -165,13 +170,12 @@ export class Player {
       this.message.Buy = "You're out of buys"
       return false
     }
-    if(card.cost > this.tally_coins()){
+    if(card.cost > this.tally_coins){
       this.message.Buy = "Not enough coins, select a cheaper cards"
       return false
     }
     card.curr_location.remove(card)
-    this.played.add_to(card, this)
-    this.coins -= card.cost
+    this.bought.add_to(card, this)
     this.buys -= 1
     this.message.Buy = "Please select a card to buy or pass"
     return true
@@ -240,6 +244,11 @@ export class Player {
     while(this.played.count > 0){
       //will need to have some logic in here to check for cards that should remain in pla
       this.discard_card(this.played.cards[0]) 
+      // this.discard.add_to(this.played.draw()) //this breaks in strange ways
+    }
+    while(this.bought.count > 0){
+      //will need to have some logic in here to check for cards that should remain in pla
+      this.discard_card(this.bought.cards[0]) 
       // this.discard.add_to(this.played.draw()) //this breaks in strange ways
     }
     this.reset_stats()
