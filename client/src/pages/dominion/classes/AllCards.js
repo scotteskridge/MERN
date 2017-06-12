@@ -8,24 +8,35 @@ import  store  from "../../../store"
 //interface then only cards that are of type victory need to have an atribute
 //of victory_points
 //all of these arributes really should be lower case
+
+
 export class Card{
   @observable curr_location = ""
   constructor(game, owner){
-
-   this.cost = 0
-  //  this.victory_points = 0 // had to change this to accomodate the gardens
-   this.type ="" // Action, Victory, Action  Attack, Action Reaction, Treasure/// Useing type.include("Type") allows cards to be of multiple types ... maybe this should be4 changed to an interface?
-   this.name = this.constructor.name //would love this to just be name = CardClassName
-  //  this.Ability //This might need to be an object with methods?
-   this.more_actions=0
-   this.buys=0
-   this.coins = 0
-   this.draws=0
-   this.description=""
-   this.curr_location = "pile"
-   this.game = game
-   this.owner = owner
+    this.cost = 0
+    //  this.victory_points = 0 // had to change this to accomodate the gardens
+    this.type ="" // Action, Victory, Action  Attack, Action Reaction, Treasure/// Useing type.include("Type") allows cards to be of multiple types ... maybe this should be4 changed to an interface?
+    // this.name =  //would love this to just be name = CardClassName
+    //  this.Ability //This might need to be an object with methods?
+    this.more_actions=0
+    this.buys=0
+    this.draws=0
+    this.description=""
+    this.curr_location = "pile"
+    this.game = game
+    this.owner = owner
   }
+  get name(){
+    return this.constructor.name
+  }
+
+  tally_victory_points(tally_ctx){
+    return (this.victory_points || 0) 
+  }
+  tally_coins(){
+    return 0
+  }
+
 
   //so when a card is played the player removes it from hand puts it on the board
   //and pushes it onto the stack ... changed this so the player does the pushing onto the stack
@@ -66,13 +77,15 @@ export class Card{
   @action update_stats(player){
     player.actions += this.more_actions
     player.buys += this.buys
-    player.coins += this.coins
+    player.coins += this.tally_coins()
     for(let i =0; i < this.draws; i++){
       player.draw()
     }
     return
   }
 }
+
+
 
 // import Copper from '../../../static/assets/Copper.jpg' //not sure why this doesnt work
 //may want to add an img atribute take a look at header on how to import those
@@ -93,7 +106,7 @@ export class AllCards{
                 Woodcutter, Workshop, Feast, Militia, Witch, 
                 Moneylender, Smithy, Throneroom, Festival,
                 Laboratory, Market, Bureaucrat, Remodel, CouncilRoom,
-                Mine, Gardens, Library, Adventurer] 
+                Mine, Gardens, Library, Adventurer, CellarV2,CellarV2,CellarV2,CellarV2,CellarV2,CellarV2,CellarV2] 
     this.BaseCards = [Copper, Silver, Gold, Estate, Duchy, Province, Curse]
     // console.log("from thr all cards constructor gamebase cards is", this.BaseCards)
   }
@@ -104,11 +117,12 @@ export class Copper extends Card {
     super(game, owner)
     this.type = "Treasure"
     this.victory_points = 0
-    this.coins = 1
+    
     this.description = `A ${this.name} gives ${this.coins} coins`
     this.pile_count = 60 
     
    }
+  tally_coins(){ return 1 }
   // on_play(player){
   //   super.on_play(player)
   //   console.log(player)
@@ -123,11 +137,11 @@ export class Silver extends Card{
     this.type = "Treasure"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 2
     this.draws = 0
     this.description = `A ${this.name} has a buying value of 2`
     this.pile_count = 40 
-    }
+  }
+  tally_coins(){ return 2 }
   on_play(player){
     super.on_play(player)
     // console.log(player)
@@ -142,11 +156,11 @@ export class Gold extends Card{
     this.type = "Treasure"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 3
     this.draws = 0
     this.description = `A ${this.name} has a buying value of 3`
     this.pile_count = 30 
-    }
+  }
+  tally_coins(){ return 3 }
   on_play(player){
     super.on_play(player)
     // console.log(player)
@@ -161,7 +175,6 @@ export class Estate extends Card {
     this.type = "Victory"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 0
     this.draws = 0
     this.description = `An ${this.name} is worth 1 Victory Point`
     this.pile_count = 24 
@@ -180,7 +193,6 @@ export class Duchy extends Card{
     this.type = "Victory"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 0
     this.draws = 0
     this.description = `A ${this.name} is worth 3 Victory Points`
     this.pile_count = 12 
@@ -199,7 +211,6 @@ export class Province extends Card{
     this.type = "Victory"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 0
     this.draws = 0
     this.description = `A ${this.name} is worth 6 Victory Points`
     this.pile_count = 12 
@@ -217,7 +228,6 @@ export class Curse extends Card{
     this.type = "Victory"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 0
     this.draws = 0
     this.description = `A ${this.name} subtracts 1 from your final score`
     this.pile_count = 24 // might be fun to do somethign with this similar to the garden and make it's pile count dynamic based on players in the game 
@@ -244,12 +254,12 @@ export class Cellar extends Card {
     this.more_actions = 1
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.redraws = 0
     this.description = `the ${this.name} let's you discard cards to redraw`
   }
   on_play(player){
+    this.redraws = 0
     this.game.event_stack.push(this)
     // console.log(player)
     this.game.current_phase = "Playing"
@@ -272,6 +282,43 @@ export class Cellar extends Card {
   }
 }
 
+export class CellarV2 extends Card {
+  constructor(game, owner){
+    super(game, owner)
+    this.cost = 2
+    this.type = "Action"
+    this.more_actions = 1
+    this.pile_count = 10 
+    this.description = `the ${this.name} let's you discard cards to redraw`
+  }
+  on_play(player){
+    
+    this.game.event_stack.push({event : resolve_events, other_function : () =>{return null}})
+    // console.log(player)
+    this.game.current_phase = "Playing"
+    player.message.Playing = "Choose a card to discard or pass"
+    let redraws = 0
+    this.game.events["Playing"] = playing_celler
+    return
+    
+    function playing_celler(card){
+      if(card.curr_location.deck_type !== "hand") {
+        return this.current_player.message.Playing = "please select a card from your hand to discard"
+        }
+        player.discard_card(card)
+        redraws++
+      }
+
+    function resolve_events(player){
+      while(redraws >0){
+        player.draw()
+        redraws--
+    }
+    //do i need to set the phase back to Action?
+   }
+  }
+
+}
 
 
 export class Chapel extends Card{
@@ -283,7 +330,6 @@ export class Chapel extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.trash = 4
     this.description = `A ${this.name} let's you trash upto 4 cards from your hand`
@@ -327,7 +373,6 @@ export class Moat extends Card{
     this.type = "Reaction Action"
     this.more_actions = 0
     this.buys = 0
-    this.coins = 0
     this.draws = 2
     this.description = `A ${this.name} protects you from attacks`
     this.pile_count = 10 
@@ -371,7 +416,6 @@ export class Village extends Card {
     this.type = "Action"
     this.more_actions = 2
     this.buys = 0
-    this.coins = 0
     this.draws = 1
     this.description = `The ${this.name} gives 2 actions and 1 draw`
     this.pile_count = 10 
@@ -420,7 +464,6 @@ export class Workshop extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10
-    this.coins = 0
     this.draws = 0
     this.description = `The ${this.name} let's you gain a card upto cost 4`
     }
@@ -519,7 +562,6 @@ export class Witch extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 2
     this.description = `The ${this.name} gives  other players curses`
   }
@@ -552,7 +594,6 @@ export class Moneylender extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.description = `The ${this.name} let's you trash a copper to gain +3 coins`
   }
@@ -584,7 +625,6 @@ export class Smithy extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 3
     this.description = `The ${this.name} draws 3 more cards`
   }
@@ -608,7 +648,6 @@ export class Throneroom extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.description = `The ${this.name} let's you play an action twice`
   }
@@ -677,7 +716,6 @@ export class Laboratory extends Card{
     this.more_actions = 1
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 2
     this.description = `The ${this.name} gives you 2 draws and 1 action`
   }
@@ -724,7 +762,6 @@ export class Bureaucrat extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.description = `Gain a silver card put it on top of your deck. Each other player reveals a Victory card from his hand and puts it on his deck (or reveals a hand with no Victory cards).`
   }
@@ -762,7 +799,6 @@ export class Remodel extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.gain_amount = 2
     this.description = `Trash a card from your hand. Gain a card costing up to $2 more than the trashed card.`
@@ -806,7 +842,6 @@ export class CouncilRoom extends Card{
     this.more_actions = 0
     this.buys = 1
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 4
     this.description = `+4 Cards; +1 Buy Each other player draws a card.`
   }
@@ -835,7 +870,6 @@ export class Mine extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.gain_amount = 3
     this.description = `Trash a Treasure card from your hand. Gain a Treasure card costing up to $3 more; put it into your hand.`
@@ -880,16 +914,15 @@ export class Gardens extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.gain_amount = 3
     this.description = `Worth 1 Victory for every 10 cards in your deck (rounded down).`
-
   }
-  @computed get victory_points(){
-    if(!this.owner || !this.owner.total_cards){return 0}
-    return  Math.floor(this.owner.total_cards/10)
-    } 
+
+  tally_victory_points(tally_ctx){ //for mobx may need to make this @action
+    if(!tally_ctx.owner || !tally_ctx.owner.total_cards){return 0}
+    return  Math.floor(tally_ctx.owner.total_cards/10)
+  }
   // set victory_points(owner){
   //   if(!this.owner || !this.owner.total_cards){return 0}
   //   return  Math.floor(owner.total_cards/10)
@@ -915,7 +948,6 @@ export class Library extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.description = `Draw until you have 7 cards in hand. You may set aside any Action cards drawn this way, as you draw them; discard the set aside cards after you finish drawing.`
   }
@@ -950,7 +982,6 @@ export class Adventurer extends Card{
     this.more_actions = 0
     this.buys = 0
     this.pile_count = 10 
-    this.coins = 0
     this.draws = 0
     this.description = `Draw cards from your deck until you have drawn 2 Treasure cards. Put those Treasure cards in your hand and discard the other drawn cards.`
   }

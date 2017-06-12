@@ -23,7 +23,6 @@ export class Game {
   @observable num_piles_to_end = 3
   @observable initialize = false
   @observable players = []
-  @observable score_tally = []
   @observable num_of_players = 0
   @observable player_num = 0
   @observable current_player = new Player
@@ -43,7 +42,6 @@ export class Game {
     this.num_piles_to_end = 3 //this is here to accomodate more than 4 players
     this.initialize = false
     this.players = []
-    this.score_tally = []
     this.num_of_players = 0
     this.player_num = 0
     this.current_player = new Player
@@ -84,9 +82,11 @@ export class Game {
   }
   //this routes all click events to the event object and the event object is remapped
   //by card.on_play methods
-    @action card_action_handler(card){
+  @action card_action_handler(card){
     return (this.events[this.current_phase])(card)    
   }
+
+  
 
 //////////////// INIT METHODS ///////////////////////////
   start_new_game(){
@@ -136,7 +136,7 @@ export class Game {
     this.current_player = this.players[0]
     this.current_phase = this.phase[0]
     this.num_piles_to_end
-    this.update_score()
+
     
   }
   assign_base_cards(){
@@ -225,6 +225,7 @@ export class Game {
         let current_event= this.event_stack[this.event_stack.length-1]
         this.event_stack.pop()
         current_event.event(this.current_player)
+
     } else { this.current_phase = "Action"}
   }
   
@@ -262,7 +263,7 @@ export class Game {
 
   @action cleanup(){
     this.check_end_game()
-    this.update_score()
+    // this.tally_score()
     this.current_phase = "Action"
     this.next_player()
     this.turn += 1
@@ -274,32 +275,24 @@ export class Game {
     //a recount every cleanup
     console.log("counting up all of the piles to see if game is over")
     if(this.num_piles_to_end <=0 ){
-      this.update_score()
-      let winner = {score: 0, player: new Player}
-      for(let player of this.players){
-        if(player.score >= winner.score){
-          winner.score = player.score
-          winner.player = player
+      const score_tally = this.tally_score()
+      let winner = score_tally[0]
+      for(const tally of score_tally){
+        if(tally.score >= winner.score){
+          winner = tally
         }
       }
-      alert(`${winner.player.name} Won the game with ${winner.score} points!`)
+      alert(`${winner.player} Won the game with ${winner.score} points!`)
     }
-    // let emptypiles = this.num_piles_to_end
-    // for(let deck of base_cards){
-    //   if(deck.count <= 0){
-    //     emptypiles -=1
-    //   }
-    
-    // }
-  
+
   }
 
-  update_score(){
-    this.score_tally = []
-    for (let player of this.players){
-      this.score_tally.push({player : player.name, score : player.tally_score() })
+  tally_score(){
+    const score_tally = []
+    for (const player of this.players){
+      score_tally.push({player : player.name, score : player.tally_score() })
     }
-    return this.score_tally
+    return score_tally
   }
   next_player(){
     // console.log("about to next player", this)

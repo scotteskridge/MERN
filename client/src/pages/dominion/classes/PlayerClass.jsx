@@ -1,6 +1,6 @@
 import { Deck } from "./DeckClass"
 // import store from "../../../store"
-import { Copper, Estate, Card, Cellar, Throneroom, Village,Workshop } from "./AllCards.js"
+import { Copper, Estate, Card, CellarV2, Throneroom, Village,Workshop } from "./AllCards.js"
 import { autorun, observable, computed, action } from "mobx"
 
 export class Player {
@@ -8,7 +8,6 @@ export class Player {
   @observable actions = 1
   @observable buys = 1
   @observable coins = 0
-  @observable score = 0
   @observable handSize = 5
   @observable deck = new Deck()
   @observable hand = new Deck()
@@ -30,7 +29,6 @@ export class Player {
     this.actions = 1
     this.buys = 1
     this.coins = 0
-    this.score = 0
     this.handSize = 5
     this.deck = new Deck(null, "deck") //this deck name is a poorly descriptive should this be draw_deck?
     this.hand = new Deck(null, "hand")
@@ -61,6 +59,21 @@ export class Player {
     return total
   }
 
+  tally_score(){
+    const tally_ctx = {owner : this, player: this}
+    return [this.deck, this.hand, this.played, this.discard]
+      .map(deck => deck.tally_score(tally_ctx))
+      .reduce((a,b) => a+b, 0)
+  }
+
+  tally_coins(){ //put this into the deck class
+    let coins = 0
+    for (const card of this.played.cards){
+      coins += card.tally_coins()
+    }
+    return coins
+  }
+
   ////////////////// INIT METHODS ////////////////////
 
    @action init_deck(game, owner){
@@ -74,17 +87,7 @@ export class Player {
     this.deck.shuffle()
   }
 
-  @action tally_score(){
-    //was doing this by concating all decks into a master all cards and then
-    //counting up the points of card of all cards... btu that was breaking mobx in weird ways
-    //moved the tally function down to the deck level
-    this.score = 0
-    this.score += this.deck.tally()
-    this.score += this.hand.tally()
-    this.score += this.played.tally()
-    this.score += this.discard.tally()
-    return this.score
-  }
+
 
   draw(target = undefined){
     //the default action will be to draw from maindeck but this is built to allow
@@ -162,7 +165,7 @@ export class Player {
       this.message.Buy = "You're out of buys"
       return false
     }
-    if(card.cost > this.coins){
+    if(card.cost > this.tally_coins()){
       this.message.Buy = "Not enough coins, select a cheaper cards"
       return false
     }

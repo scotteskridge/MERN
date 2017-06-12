@@ -8,12 +8,14 @@ export default class PlayerStats extends React.Component {
     
     render(){
         if(!this.props.player){return null }
+        // debugger; const coins =  this.props.player.tally_coins()
         return (
             <div>
                 <h4>{this.props.player.name} </h4>
                 <p>Actions: {this.props.player.actions} </p>
                 <p>Buys: {this.props.player.buys} </p>
-                <p>Coins: {this.props.player.coins} </p>
+                
+                <p>Coins: { this.props.player.tally_coins() } </p>
 
             </div>
         )

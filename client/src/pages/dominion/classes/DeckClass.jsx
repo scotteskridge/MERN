@@ -45,7 +45,8 @@ export class Deck {
   //starter deck should really be in the game class this is especially obvious that store is throwing erros at
   //init this is even more true as I don't really need to pass params for this... leaving here for now
   //but come back and clean this up
- 
+  [Symbol.iterator](){ return this.cards }
+  //if you want to use foreach make a copy with slice and iterate over the copy and mutate the original
 
   shuffle(){
     for(let i = 0; i <this.cards.length; i++){
@@ -78,8 +79,7 @@ export class Deck {
   }
 
   @action remove(card){
-    let index = this.cards.indexOf(card)
-    return this.cards.splice(index,1)
+    return this.cards.splice(this.cards.indexOf(card),1)
   }
 
   //as much as I like my show method I just realized that it's whats allowing the plaed cards to have a play_card method
@@ -87,10 +87,10 @@ export class Deck {
   
 
   //I wonder if I can turn this into a generator or yeil a value?
-  tally(){
+  tally_score(tally_ctx){
     let score = 0
-    for(let card of this.cards){
-      if(card.victory_points){ score += card.victory_points}
+    for(const card of this.cards){
+      score += card.tally_victory_points(tally_ctx)
     }
     return score
   }

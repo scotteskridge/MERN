@@ -19,9 +19,11 @@ export function DisplayCard(card) {
                 <ul className="card">
                     <li>Name: {card.name}</li>
                     <li>Cost: {card.cost}</li>
+                    <li>Coins: {card.tally_coins()}</li>
                     <li>Victory Points : {card.victory_points}</li>
                     <li>Type: {card.type}</li>
                     <li>Description: {card.description}</li>
+
                 </ul>
             </div>
             

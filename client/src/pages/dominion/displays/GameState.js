@@ -17,7 +17,7 @@ export default class GameState extends React.Component {
 	}
 
 	render(){
-		let score_list = this.props.store.current_game.score_tally.map((score , index) =>{
+		let score_list = this.props.store.current_game.tally_score().map((score , index) =>{
             return <div key ={index}>{score.player} {score.score}</div>;
         })
         
