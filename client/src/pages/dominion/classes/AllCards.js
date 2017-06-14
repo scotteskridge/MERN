@@ -106,7 +106,7 @@ export class AllCards{
                 Woodcutter, Workshop, Feast, Militia, Witch, 
                 Moneylender, Smithy, Throneroom, Festival,
                 Laboratory, Market, Bureaucrat, Remodel, CouncilRoom,
-                Mine, Gardens, Library, Adventurer, CellarV2,CellarV2,CellarV2,CellarV2,CellarV2,CellarV2,CellarV2] 
+                Mine, Gardens, Library, Adventurer] 
     this.BaseCards = [Copper, Silver, Gold, Estate, Duchy, Province, Curse]
     // console.log("from thr all cards constructor gamebase cards is", this.BaseCards)
   }

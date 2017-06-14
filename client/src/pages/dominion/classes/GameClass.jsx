@@ -115,12 +115,12 @@ export class Game {
 
 
     ////////////////// dev mode ////////////////////
-    // this.num_of_players = parseInt(prompt("Please enter the number of new players:"))
-    this.num_of_players =4
+    this.num_of_players = parseInt(prompt("Please enter the number of new players:"))
+    // this.num_of_players =4
     if(this.num_of_players !=0){
       for (let i = 0; i < this.num_of_players; i++){
-        // let name = prompt("Please enter the players name:")
-        let name = i
+        let name = prompt("Please enter the players name:")
+        // let name = i
         let player = new Player(name, this) //should look into deconstruction again
         player.draw_hand()
         this.players.push(player)    
